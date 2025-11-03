@@ -237,7 +237,7 @@
 
       // fetch casos
       try{
-        const resp = await fetch('http://localhost:5000/api/cases');
+        fetch('/api/cases')
         casosData = await resp.json();
       }catch(e){
         console.warn('Erro ao carregar casos:', e);
@@ -345,7 +345,7 @@
           e.preventDefault();
           const regiao = btn.dataset.regiao.toLowerCase();
           try{
-            const resp = await fetch('http://localhost:5000/api/cases');
+            const resp = await fetch('/api/cases');
             const data = await resp.json();
             const filtrados = data.filter(c => normaliza(c.region) === regiao);
             exibirCasos(filtrados, btn.textContent || regiao);
@@ -359,7 +359,7 @@
         const estado = e.target.value;
         const container = document.getElementById('cases-container');
         if(!estado){ container.innerHTML = ''; return; }
-        let data = casosData.length ? casosData : (await (await fetch('http://localhost:5000/api/cases')).json()).map(c=> ({...c, state_normal: normaliza(c.state)}));
+        let data = casosData.length ? casosData : (await (await fetch('/api/cases')).json()).map(c=> ({...c, state_normal: normaliza(c.state)}));
         const casos = data.filter(c => normaliza(c.state) === normaliza(estado));
         exibirCasos(casos, estado);
 
@@ -431,7 +431,7 @@
           const lista = document.getElementById('lista-politicos');
           lista.classList.remove('hidden'); lista.innerHTML = `<p class="text-gray-400 text-sm">Carregando ${cargo}s...</p>`;
           try{
-            const resp = await fetch(`http://localhost:5000/api/politicos?cargo=${encodeURIComponent(cargo)}`);
+            const resp = await fetch(`/api/politicos?cargo=${encodeURIComponent(cargo)}`);
             const data = await resp.json();
             if(!data.length) lista.innerHTML = `<p class="text-gray-400 text-sm">Nenhum ${cargo} encontrado no banco.</p>`;
             else{
@@ -451,12 +451,12 @@
 
     async function exibirPolitico(id){
       try{
-        const resp = await fetch(`http://localhost:5000/api/politicos`);
+        const resp = await fetch('/api/politicos');
         const todos = await resp.json();
         const politico = todos.find(p => p.id == id);
         if(!politico) return;
 
-        const noticiasResp = await fetch(`http://localhost:5000/api/politicos/${id}/news`).catch(() => ({ json: async () => [] }));
+        const noticiasResp = await fetch(`/api/politicos/${id}/news`).catch(() => ({ json: async () => [] }));
         const noticias = await noticiasResp.json();
 
         const painel = document.getElementById('painel-politico') || createPainelPolitico();
