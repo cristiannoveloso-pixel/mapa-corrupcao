@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Os Três Poderes — Brasil Transparente</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      background: #0f172a;
+      color: #e6eef8;
+      font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+      overflow-x: hidden;
+    }
+    .power-card {
+      background: #1e293b;
+      color: #e2e8f0;
+      border-radius: 16px;
+      padding: 32px;
+      text-align: center;
+      position: relative;
+      box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .power-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 12px 24px rgba(0,0,0,0.25);
+    }
+    .power-icon {
+      font-size: 64px;
+      margin-bottom: 12px;
+    }
+    .connector {
+      position: absolute;
+      top: 50%;
+      left: 100%;
+      width: 80px;
+      height: 3px;
+      background: linear-gradient(90deg, rgba(255,255,255,0.15), rgba(255,255,255,0.3));
+      transform: translateY(-50%);
+    }
+    @media (max-width: 1024px) {
+      .connector { display: none; }
+    }
+    .fade-up {
+      opacity: 0;
+      transform: translateY(40px);
+      transition: all 0.8s ease;
+    }
+    .fade-up.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Linha do tempo */
+    .timeline {
+      position: relative;
+      margin-top: 4rem;
+      padding: 2rem 0;
+      border-left: 3px solid rgba(255,255,255,0.15);
+    }
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: -2px;
+      top: 0;
+      bottom: 0;
+      width: 3px;
+      background: linear-gradient(to bottom, rgba(255,255,255,0.3), rgba(255,255,255,0));
+    }
+    .timeline-item {
+      margin-left: 2rem;
+      margin-bottom: 2rem;
+      position: relative;
+    }
+    .timeline-item::before {
+      content: '';
+      position: absolute;
+      left: -2.15rem;
+      top: 0.5rem;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: #facc15;
+      border: 2px solid #fff;
+    }
+    .timeline-year {
+      color: #facc15;
+      font-weight: bold;
+    }
+    .timeline-desc {
+      color: #cbd5e1;
+      font-size: 0.875rem;
+      margin-top: 0.25rem;
+    }
+  </style>
+</head>
+<body class="min-h-screen p-6">
+  <header class="mb-10 text-center fade-up">
+    <a href="index.html" class="text-sm text-gray-300 hover:text-white">&larr; Voltar</a>
+    <h1 class="text-3xl font-bold text-yellow-400 mt-4">Os Três Poderes</h1>
+    <p class="text-sm text-gray-400 mt-2">
+      A República Federativa do Brasil se organiza em três poderes independentes e harmônicos entre si: o Executivo, o Legislativo e o Judiciário.
+    </p>
+  </header>
+
+  <main class="container mx-auto max-w-6xl">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 relative fade-up">
+      <!-- Executivo -->
+      <div class="power-card border-t-4 border-green-500">
+        <div class="power-icon">⚖️</div>
+        <h2 class="text-2xl font-bold text-green-400 mb-2">Executivo</h2>
+        <p class="text-sm text-gray-300 mb-4">
+          Administra o país, executa as leis e implementa políticas públicas. Liderado pelo Presidente da República, governadores e prefeitos.
+        </p>
+        <p class="text-xs text-gray-400">
+          Exemplo: Presidência, Ministérios, Secretarias e Prefeituras.
+        </p>
+        <div class="connector"></div>
+      </div>
+
+      <!-- Legislativo -->
+      <div class="power-card border-t-4 border-yellow-500">
+        <div class="power-icon">🏛️</div>
+        <h2 class="text-2xl font-bold text-yellow-400 mb-2">Legislativo</h2>
+        <p class="text-sm text-gray-300 mb-4">
+          Cria, altera e revoga leis. Fiscaliza o Executivo e representa a vontade popular por meio de deputados e senadores.
+        </p>
+        <p class="text-xs text-gray-400">
+          Exemplo: Congresso Nacional, Assembleias Legislativas e Câmaras Municipais.
+        </p>
+        <div class="connector"></div>
+      </div>
+
+      <!-- Judiciário -->
+      <div class="power-card border-t-4 border-blue-500">
+        <div class="power-icon">⚔️</div>
+        <h2 class="text-2xl font-bold text-blue-400 mb-2">Judiciário</h2>
+        <p class="text-sm text-gray-300 mb-4">
+          Garante o cumprimento das leis, julga conflitos e assegura os direitos dos cidadãos, atuando com base na Constituição.
+        </p>
+        <p class="text-xs text-gray-400">
+          Exemplo: STF, STJ, Tribunais Regionais e Juizados Especiais.
+        </p>
+      </div>
+    </div>
+
+    <section class="mt-16 fade-up text-center max-w-3xl mx-auto">
+      <h3 class="text-2xl font-bold text-yellow-400 mb-3">Equilíbrio e Harmonia</h3>
+      <p class="text-gray-300 text-sm leading-relaxed">
+        O equilíbrio entre os três poderes — conhecido como <strong>freios e contrapesos</strong> — é essencial para a democracia.  
+        Nenhum poder é superior aos outros: todos possuem funções próprias e mecanismos de controle mútuo.
+      </p>
+    </section>
+
+    <!-- Linha do tempo histórica -->
+    <section class="timeline fade-up max-w-3xl mx-auto mt-16">
+      <h3 class="text-2xl font-bold text-yellow-400 mb-6">Linha do Tempo — Momentos Históricos</h3>
+
+      <div class="timeline-item">
+        <div class="timeline-year">1988 — Constituição Federal</div>
+        <div class="timeline-desc">Promulgada a nova Constituição, que estabelece a separação e harmonia entre os Três Poderes, fortalecendo a democracia.</div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-year">1992 — Impeachment de Fernando Collor</div>
+        <div class="timeline-desc">O Legislativo exerce seu papel de controle, e o Judiciário garante o devido processo legal.</div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-year">2005 — CPI do Mensalão</div>
+        <div class="timeline-desc">O Congresso investiga denúncias de corrupção; o STF posteriormente julga e condena envolvidos.</div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-year">2016 — Impeachment de Dilma Rousseff</div>
+        <div class="timeline-desc">Processo conduzido pelo Legislativo, com supervisão do STF, exemplificando o sistema de freios e contrapesos.</div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-year">2020–2022 — Conflitos institucionais</div>
+        <div class="timeline-desc">O STF, o Executivo e o Congresso atuam em tensões democráticas, reforçando a importância do equilíbrio entre poderes.</div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-year">2025 — Avanços de transparência</div>
+        <div class="timeline-desc">Cresce o papel da sociedade e da tecnologia na fiscalização dos poderes, fortalecendo a integridade pública.</div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="text-center text-gray-500 text-sm py-10 fade-up">
+    © 2025 Brasil Transparente — Todos contra a corrupção
+  </footer>
+
+  <script>
+    function observarAnimacoes(selector) {
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+            observer.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.2 });
+      document.querySelectorAll(selector).forEach((el) => observer.observe(el));
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      observarAnimacoes('.fade-up');
+    });
+  </script>
+</body>
+</html>

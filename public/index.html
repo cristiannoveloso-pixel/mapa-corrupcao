@@ -1,0 +1,497 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Mapa da Corrupção - Brasil Transparente</title>
+
+  <!-- Tailwind (dev CDN - para produção recomendo build local) -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
+
+  <!-- Leaflet -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+  <!-- Seu CSS -->
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    /* Pequenas garantias visuais para a versão limpa */
+    body{font-family:Poppins,system-ui,Arial;background:#0f172a;color:#e6eef8}
+    .submenu{display:none}
+    #map{height:650px;border-radius:8px}
+    .case-card{background:#0b1220;border-radius:8px;padding:12px;margin-bottom:8px;border:1px solid rgba(255,255,255,0.03)}
+    #submenu-politicos{position:absolute;z-index:100500;min-width:220px}
+  </style>
+</head>
+<body class="bg-slate-950 text-gray-100 font-[Poppins,sans-serif]">
+
+  <!-- HEADER -->
+  <header class="bg-gray-900 text-gray-200">
+    <div class="header-top-bar py-2 px-4 text-sm flex flex-col md:flex-row justify-between items-center">
+      <div class="mb-2 md:mb-0">
+        <span>Últimas Atualizações: Casos de corrupção no Senado Federal</span>
+      </div>
+      <div class="flex space-x-4">
+       <a href="#" id="btnAddCase" class="nav-link text-yellow-400 hover:text-yellow-300"><i class="fa-solid fa-plus mr-1"></i> admin</a>
+      </div>
+    </div>
+
+    <div class="container mx-auto py-4 px-4 flex flex-col md:flex-row justify-between items-center">
+      <div class="flex items-center mb-4 md:mb-0">
+        <img src="logo_brasil_transparente.png" alt="Logo Brasil Transparente" class="mr-3" style="height:60px;display:inline-block;vertical-align:middle;">
+        <h1 class="text-4xl font-extrabold text-yellow-400 drop-shadow-md tracking-wide inline-block align-middle">Mapa da Corrupção</h1>
+      </div>
+    </div>
+
+    <!-- NAV -->
+    <nav class="bg-gray-900 py-3">
+      <div class="container mx-auto px-4 flex flex-col md:flex-row gap-4 md:items-center">
+        <div class="flex gap-2 md:gap-4 items-start md:items-center w-full md:w-auto">
+          <div class="nav-item">
+            <button id="menu-button" class="md:hidden text-gray-200 focus:outline-none">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+              </svg>
+            </button>
+
+            <ul id="main-menu" class="hidden md:flex md:space-x-4 flex-col md:flex-row w-full md:w-auto">
+              <li><a href="#" class="nav-link">Página Inicial</a></li>
+
+<div class="nav-item">
+  <div class="nav-link flex items-center justify-between cursor-pointer" data-toggle="submenu-politicos">
+    <span>Políticos</span>
+    <svg class="w-4 h-4 ml-1 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+    </svg>
+  </div>
+
+  <div id="submenu-politicos" class="submenu bg-slate-900 border border-slate-700 rounded-xl mt-2 p-3">
+    <h4 class="text-yellow-400 font-semibold mb-2">Classificação</h4>
+    <ul id="tipos-politicos" class="space-y-1 text-sm">
+      <li class="hover:text-yellow-400 cursor-pointer" data-cargo="presidente">Presidentes</li>
+      <li class="hover:text-yellow-400 cursor-pointer" data-cargo="governador">Governadores</li>
+      <li class="hover:text-yellow-400 cursor-pointer" data-cargo="senador">Senadores</li>
+      <li class="hover:text-yellow-400 cursor-pointer" data-cargo="deputado federal">Deputados Federais</li>
+      <li class="hover:text-yellow-400 cursor-pointer" data-cargo="deputado estadual">Deputados Estaduais</li>
+    </ul>
+
+    <div id="lista-politicos" class="hidden mt-3 max-h-[360px] overflow-y-auto"></div>
+
+    <div id="ficha-politico" class="hidden mt-3 p-3 bg-slate-800 border border-slate-700 rounded-lg animate-fade-in">
+      <button id="voltar-politicos" class="mb-3 text-yellow-400 hover:text-yellow-300 flex items-center gap-1">
+        <i class="fa-solid fa-arrow-left"></i> Voltar
+      </button>
+      <div id="dados-politico"></div>
+    </div>
+  </div>
+</div>
+
+              <div class="nav-item">
+                <div class="nav-link" data-toggle="menu-regioes">
+                  Regiões
+                  <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                  </svg>
+                </div>
+                <div id="menu-regioes" class="submenu">
+                  <a href="#" data-regiao="norte">Norte</a>
+                  <a href="#" data-regiao="nordeste">Nordeste</a>
+                  <a href="#" data-regiao="centro-oeste">Centro-Oeste</a>
+                  <a href="#" data-regiao="sudeste">Sudeste</a>
+                  <a href="#" data-regiao="sul">Sul</a>
+                </div>
+              </div>
+
+    <div class="nav-item">
+      <select id="stateSelect" class="bg-slate-800 border border-slate-600 text-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-yellow-400 transition">
+          <option value="">Estados</option>
+          <option value="Acre">Acre</option>
+          <option value="Alagoas">Alagoas</option>
+          <option value="Amapá">Amapá</option>
+          <option value="Amazonas">Amazonas</option>
+          <option value="Bahia">Bahia</option>
+          <option value="Ceará">Ceará</option>
+          <option value="Distrito Federal">Distrito Federal</option>
+          <option value="Espírito Santo">Espírito Santo</option>
+          <option value="Goiás">Goiás</option>
+          <option value="Maranhão">Maranhão</option>
+          <option value="Mato Grosso">Mato Grosso</option>
+          <option value="Mato Grosso do Sul">Mato Grosso do Sul</option>
+          <option value="Minas Gerais">Minas Gerais</option>
+          <option value="Pará">Pará</option>
+          <option value="Paraíba">Paraíba</option>
+          <option value="Paraná">Paraná</option>
+          <option value="Pernambuco">Pernambuco</option>
+          <option value="Piauí">Piauí</option>
+          <option value="Rio de Janeiro">Rio de Janeiro</option>
+          <option value="Rio Grande do Norte">Rio Grande do Norte</option>
+          <option value="Rio Grande do Sul">Rio Grande do Sul</option>
+          <option value="Rondônia">Rondônia</option>
+          <option value="Roraima">Roraima</option>
+          <option value="Santa Catarina">Santa Catarina</option>
+          <option value="São Paulo">São Paulo</option>
+          <option value="Sergipe">Sergipe</option>
+          <option value="Tocantins">Tocantins</option>
+    </select>
+  </div>
+            <div class="nav-item">
+          <a href="cidades.html" class="nav-link">Cidades</a>
+        </div>
+              <li><a href="leis.html" class="nav-link">Leis Anticorrupção</a></li>
+              <li><a href="poderes.html" class="nav-link">Os Três Poderes</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <!-- MAIN -->
+  <main class="container mx-auto px-4 py-6 flex flex-col lg:flex-row gap-6">
+    <section class="flex-1 bg-slate-900 p-4 rounded-lg shadow-lg">
+      <div id="total-casos" class="total-casos mb-3"></div>
+
+<div class="flex flex-wrap items-center justify-between bg-slate-900 text-gray-100 p-3 rounded-lg mb-2 shadow-md gap-2">
+  <div id="total-casos" class="text-yellow-300 text-lg mb-2 font-semibold"> Total de casos de corrupção registrados no Brasil: <strong>0</strong>
+</div>
+  <input type="text" id="searchInput" placeholder="Pesquisar por estado, cidade ou ano..." class="flex-1 min-w-[200px] max-w-lg bg-slate-800 border border-slate-600 text-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-yellow-400" />
+  <button id="recenter" class="recenter-btn">🔄 Recentrar mapa</button>
+</div>
+    <div id="map" class="w-full h-[650px] rounded-lg shadow-lg"></div>
+    <div id="cases-container" class="mt-4 text-sm text-gray-300"></div>
+  </section>
+
+  <aside class="sidebar w-full lg:w-[24%]">
+    <h3>Mais Lidos</h3>
+    <ul>
+      <li><a href="#">1. Como identificar sinais de corrupção em órgãos públicos.</a></li>
+      <li><a href="#">2. Os 10 maiores escândalos de corrupção da história do Brasil.</a></li>
+      <li><a href="#">3. Guia completo sobre a Lei Anticorrupção (Lei nº 12.846/2013).</a></li>
+      <li><a href="#">4. O impacto da corrupção na economia brasileira: um estudo de caso.</a></li>
+      <li><a href="#">5. Denúncias anônimas: como proteger-se e combater o crime.</a></li>
+    </ul>
+
+    <h3>Leis e Legislação</h3>
+    <ul>
+      <li><a href="#">Lei de Improbidade Administrativa (Lei 8.429/92)</a></li>
+      <li><a href="#">Lei nº 12.846/2013 (Lei Anticorrupção)</a></li>
+      <li><a href="#">Código Penal - Crimes Contra a Administração Pública</a></li>
+      <li><a href="#">Lei de Acesso à Informação (Lei 12.527/11)</a></li>
+    </ul>
+
+    <h3>Órgãos de Combate</h3>
+    <ul>
+      <li><a href="https://www.mpf.mp.br/" target="_blank">Ministério Público Federal (MPF)</a></li>
+      <li><a href="https://www.pf.gov.br/" target="_blank">Polícia Federal (PF)</a></li>
+      <li><a href="https://www.cgu.gov.br/" target="_blank">Controladoria-Geral da União (CGU)</a></li>
+      <li><a href="https://www.tcu.gov.br/" target="_blank">Tribunal de Contas da União (TCU)</a></li>
+      <li><a href="https://www.stf.jus.br/" target="_blank">Supremo Tribunal Federal (STF)</a></li>
+    </ul>
+
+    <div class="alert-box">
+      <p><strong>Denuncie a Corrupção!</strong></p>
+      <p class="descricao">Sua voz faz a diferença. Contribua para um Brasil mais justo.</p>
+      <a href="https://www.mpf.mp.br/mpfservicos/denuncia">Faça sua Denúncia Aqui</a>
+    </div>
+  </aside>
+</main>
+  <footer class="footer">
+    <div class="footer-container">
+      <div class="footer-left">
+        <img src="logo_brasil_transparente.png" alt="Logo Brasil Transparente" style="height:48px;">
+        <p class="footer-text">© 2025 Cristiano Veloso | Todos os direitos reservados</p>
+      </div>
+      <div class="footer-right">
+        <a href="https://wa.me/63999480786" target="_blank" class="footer-icon"><i class="fa-brands fa-whatsapp"></i></a>
+        <a href="https://www.linkedin.com/in/cristiano.veloso/" target="_blank" class="footer-icon"><i class="fa-brands fa-linkedin-in"></i></a>
+        <a href="https://www.instagram.com/seu_perfil_aqui/" target="_blank" class="footer-icon"><i class="fa-brands fa-instagram"></i></a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- SCRIPTS CONSOLIDADOS (sem duplicações) -->
+  <script>
+    // ---------- UTIL ----------
+    const normaliza = s => s ? s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().trim() : '';
+
+    // ---------- GLOBALS ----------
+    let casosData = [];
+    let map = null;
+    let geoLayer = null;
+
+    // ---------- MAP & DATA INIT (única função) ----------
+    async function initMapAndData(){
+      const mapEl = document.getElementById('map');
+
+      const boundsBrasil = L.latLngBounds(L.latLng(-34.0, -74.0), L.latLng(6.0, -32.0));
+
+      map = L.map('map', { zoomControl: true, attributionControl: false, minZoom: 3, maxZoom: 7 }).setView([-14.2, -51.9], 4);
+
+      // fundo simples
+      L.rectangle(boundsBrasil, { color: '#0f172a', fillColor: '#0f172a', fillOpacity: 1, weight: 0 }).addTo(map);
+
+      // recenter
+      document.getElementById('recenter').addEventListener('click', () => map.fitBounds(boundsBrasil));
+
+      // fetch casos
+      try{
+        const resp = await fetch('http://localhost:5000/api/cases');
+        casosData = await resp.json();
+      }catch(e){
+        console.warn('Erro ao carregar casos:', e);
+        casosData = [];
+      }
+
+      // contador
+      const contadorEl = document.querySelector('#total-casos strong') || document.getElementById('total-casos');
+      if(contadorEl){
+        if(contadorEl.tagName === 'STRONG') contadorEl.textContent = casosData.length;
+        else contadorEl.innerHTML = `🧾 Total de casos de corrupção registrados no Brasil: <strong>${casosData.length}</strong>`;
+      }
+
+      casosData = casosData.map(c => ({...c, state_normal: normaliza(c.state)}));
+
+      // load geojson
+      try{
+        const r = await fetch('https://raw.githubusercontent.com/codeforamerica/click_that_hood/master/public/data/brazil-states.geojson');
+        const geo = await r.json();
+
+        geoLayer = L.geoJSON(geo, {
+          style: f => {
+            const nome = normaliza(f.properties.name);
+            const qtd = casosData.filter(c => c.state_normal === nome).length;
+            return { color: '#facc15', weight: 1.2, fillColor: getColor(qtd), fillOpacity: 0.8 };
+          },
+          onEachFeature: (f, layer) => {
+            const nome = f.properties.name;
+            const qtd = casosData.filter(c => c.state_normal === normaliza(nome)).length;
+            layer.bindTooltip(`${nome} — ${qtd} caso${qtd !== 1 ? 's' : ''}`, { direction: 'top', className: 'tooltip-estado' });
+            layer.on('click', () => exibirCasos(casosData.filter(c => c.state_normal === normaliza(nome)), nome));
+            layer.on('mouseover', () => layer.setStyle({ fillOpacity: 1 }));
+            layer.on('mouseout', () => layer.setStyle({ fillOpacity: 0.8 }));
+          }
+        }).addTo(map);
+
+        map.fitBounds(boundsBrasil);
+
+      }catch(err){ console.error('Erro GeoJSON', err); }
+
+      // fade-in fix
+      mapEl.classList.add('loaded');
+    }
+
+    // ---------- Auxiliares ----------
+    function getColor(qtd){
+      if (qtd === 0) return '#1e40af';
+      if (qtd <= 2) return '#2563eb';
+      if (qtd <= 4) return '#facc15';
+      return '#dc2626';
+    }
+
+    function exibirCasos(casos, nome){
+      const div = document.getElementById('cases-container');
+      div.innerHTML = `<h3 style="color:#facc15;">Casos em ${nome}</h3>`;
+      if(!casos.length) return div.innerHTML += `<p style="color:#94a3b8;">Nenhum caso registrado.</p>`;
+      casos.forEach(c => {
+        const card = document.createElement('div');
+        card.className = 'case-card';
+        card.innerHTML = `
+          <h4>${c.title}</h4>
+          <p><strong>${c.city || c.municipality || '—'}</strong> — ${c.year || c.date || ''}</p>
+          <p>${c.summary || ''}</p>
+          <a href="${c.source || c.url || '#'}" target="_blank" style="color:#60a5fa;">Fonte oficial</a>
+        `;
+        div.appendChild(card);
+      });
+    }
+
+    // ---------- Interações do menu & filtros ----------
+    document.addEventListener('DOMContentLoaded', () => {
+      initMapAndData();
+
+      // mobile menu
+      const menuButton = document.getElementById('menu-button');
+      menuButton && menuButton.addEventListener('click', () => {
+        const menu = document.getElementById('main-menu');
+        if(menu.classList.contains('hidden')){ menu.classList.remove('hidden'); menu.classList.add('flex'); }
+        else { menu.classList.add('hidden'); menu.classList.remove('flex'); }
+      });
+
+      // submenu toggles (single handler)
+      document.querySelectorAll('[data-toggle]').forEach(toggle => {
+        toggle.addEventListener('click', (e) => {
+          e.preventDefault();
+          const targetId = toggle.getAttribute('data-toggle');
+          const submenu = document.getElementById(targetId);
+          if(!submenu) return;
+          // fecha outros
+          document.querySelectorAll('.submenu').forEach(el => { if(el !== submenu) el.style.display = 'none'; });
+          submenu.style.display = (submenu.style.display === 'block') ? 'none' : 'block';
+        });
+      });
+
+      // fechar submenus ao clicar fora
+      document.addEventListener('click', (e) => {
+        const isToggle = e.target.closest('[data-toggle]');
+        const isSubmenu = e.target.closest('.submenu');
+        if(!isToggle && !isSubmenu){ document.querySelectorAll('.submenu').forEach(el => el.style.display = 'none'); }
+      });
+
+      // regiao buttons
+      document.querySelectorAll('[data-regiao]').forEach(btn => {
+        btn.addEventListener('click', async (e) => {
+          e.preventDefault();
+          const regiao = btn.dataset.regiao.toLowerCase();
+          try{
+            const resp = await fetch('http://localhost:5000/api/cases');
+            const data = await resp.json();
+            const filtrados = data.filter(c => normaliza(c.region) === regiao);
+            exibirCasos(filtrados, btn.textContent || regiao);
+          }catch(err){ console.error(err); }
+        });
+      });
+
+      // state select
+      const stateSelect = document.getElementById('stateSelect');
+      stateSelect && stateSelect.addEventListener('change', async (e) => {
+        const estado = e.target.value;
+        const container = document.getElementById('cases-container');
+        if(!estado){ container.innerHTML = ''; return; }
+        let data = casosData.length ? casosData : (await (await fetch('http://localhost:5000/api/cases')).json()).map(c=> ({...c, state_normal: normaliza(c.state)}));
+        const casos = data.filter(c => normaliza(c.state) === normaliza(estado));
+        exibirCasos(casos, estado);
+
+        if(window.geoLayer){
+          let encontrado = false;
+          window.geoLayer.eachLayer(layer => {
+            const nome = layer.feature?.properties?.name;
+            if(nome && nome.toLowerCase() === estado.toLowerCase()){
+              encontrado = true;
+              map.fitBounds(layer.getBounds(), { maxZoom: 7, padding: [20,20] });
+              const originalStyle = { ...layer.options };
+              layer.setStyle({ color: '#facc15', weight: 2, fillOpacity: 0.6 });
+              setTimeout(() => { if(window.geoLayer.resetStyle) window.geoLayer.resetStyle(layer); else layer.setStyle(originalStyle); }, 3000);
+            }
+          });
+          if(!encontrado) console.warn('Estado não encontrado no mapa:', estado);
+        }
+      });
+
+      // search input
+      const searchInput = document.getElementById('searchInput');
+      searchInput && searchInput.addEventListener('input', (e) => {
+        const q = normaliza(e.target.value);
+        const filtrados = (casosData || []).filter(c => (c.title && normaliza(c.title).includes(q)) || (c.state && normaliza(c.state).includes(q)) || (c.municipality && normaliza(c.municipality).includes(q)) || (c.region && normaliza(c.region).includes(q)));
+        exibirCasos(filtrados, 'Resultado da pesquisa');
+      });
+
+      // setup politicos panel
+      setupPoliticosPanel();
+
+      // admin button
+      document.getElementById('btnAddCase') && document.getElementById('btnAddCase').addEventListener('click', function(e){ e.preventDefault(); const senha = prompt('🔑 Digite a senha de administrador para acessar o cadastro:'); if(senha === '12345') window.location.href = 'add-case.html'; else if(senha !== null) alert('❌ Senha incorreta. Acesso negado.'); });
+    });
+
+    // ---------- POLÍTICOS PANEL ----------
+    function setupPoliticosPanel(){
+      const trigger = document.querySelector('[data-toggle="submenu-politicos"]');
+      const submenu = document.getElementById('submenu-politicos');
+      if(!trigger || !submenu) return;
+
+      // move to body to avoid clipping
+      document.body.appendChild(submenu);
+      submenu.style.display = 'none';
+
+      function posicionarSubmenu(){
+        const rect = trigger.getBoundingClientRect();
+        const submenuRect = submenu.getBoundingClientRect();
+        const margin = 8;
+        let top = rect.bottom + margin + window.scrollY;
+        if(top + submenuRect.height > window.scrollY + window.innerHeight) top = rect.top - submenuRect.height - margin + window.scrollY;
+        let left = rect.left + window.scrollX;
+        if(left + submenuRect.width > window.innerWidth - 8) left = window.innerWidth - submenuRect.width - 8 + window.scrollX;
+        if(left < 8) left = 8 + window.scrollX;
+        submenu.style.top = `${top}px`;
+        submenu.style.left = `${left}px`;
+      }
+
+      let aberto = false;
+      trigger.addEventListener('click', (ev) => { ev.preventDefault(); ev.stopPropagation(); if(aberto) { submenu.style.display = 'none'; aberto = false; } else { posicionarSubmenu(); submenu.style.display = 'block'; aberto = true; } });
+
+      document.addEventListener('click', (e) => { if(!aberto) return; if(!e.target.closest('#submenu-politicos') && !e.target.closest('[data-toggle="submenu-politicos"]')) { submenu.style.display = 'none'; aberto = false; } });
+      window.addEventListener('resize', () => { if(aberto) posicionarSubmenu(); });
+      window.addEventListener('scroll', () => { if(aberto) posicionarSubmenu(); });
+
+      // tipos politicos
+      document.querySelectorAll('#tipos-politicos li[data-cargo]').forEach(li => {
+        li.addEventListener('click', async () => {
+          const cargo = li.getAttribute('data-cargo');
+          const lista = document.getElementById('lista-politicos');
+          lista.classList.remove('hidden'); lista.innerHTML = `<p class="text-gray-400 text-sm">Carregando ${cargo}s...</p>`;
+          try{
+            const resp = await fetch(`http://localhost:5000/api/politicos?cargo=${encodeURIComponent(cargo)}`);
+            const data = await resp.json();
+            if(!data.length) lista.innerHTML = `<p class="text-gray-400 text-sm">Nenhum ${cargo} encontrado no banco.</p>`;
+            else{
+              lista.innerHTML = data.map(p => `
+                <div class='bg-slate-800 border border-slate-700 rounded-lg p-3 mb-2'>
+                  <h4 class='text-yellow-400 font-semibold text-base'>${p.nome}</h4>
+                  <p class='text-sm text-gray-300'>Partido: ${p.partido || '—'} | Estado: ${p.estado || '—'}</p>
+                  <button class='ver-detalhes bg-blue-600 hover:bg-blue-700 text-white text-xs mt-2 px-3 py-1 rounded' data-id='${p.id}'>Ver Detalhes</button>
+                </div>`).join('');
+
+              lista.querySelectorAll('.ver-detalhes').forEach(btn => btn.addEventListener('click', () => exibirPolitico(btn.dataset.id)));
+            }
+          }catch(e){ lista.innerHTML = `<p class='text-red-500'>Erro ao carregar ${cargo}s.</p>`; console.error(e); }
+        });
+      });
+    }
+
+    async function exibirPolitico(id){
+      try{
+        const resp = await fetch(`http://localhost:5000/api/politicos`);
+        const todos = await resp.json();
+        const politico = todos.find(p => p.id == id);
+        if(!politico) return;
+
+        const noticiasResp = await fetch(`http://localhost:5000/api/politicos/${id}/news`).catch(() => ({ json: async () => [] }));
+        const noticias = await noticiasResp.json();
+
+        const painel = document.getElementById('painel-politico') || createPainelPolitico();
+        const conteudo = painel.querySelector('#conteudo-politico');
+        const temCasos = noticias && noticias.length > 0;
+
+        let html = `<h3>${politico.nome}</h3>`;
+        html += `<div class="campo"><strong>Cargo:</strong> ${politico.cargo}</div>`;
+        html += `<div class="campo"><strong>Partido:</strong> ${politico.partido || '—'}</div>`;
+        html += `<div class="campo"><strong>Estado:</strong> ${politico.estado || '—'}</div>`;
+        html += `<div class="campo"><strong>Status:</strong> ${temCasos ? "<span style='color:#dc2626'>Citado em casos de corrupção</span>" : "<span style='color:#22c55e'>Sem registros</span>"}</div>`;
+
+        if(temCasos){ html += `<h4 style='color:#facc15;margin-top:1rem;'>Casos relacionados:</h4>` + noticias.map(n => `
+          <div class='caso'>
+            <h4>${n.title}</h4>
+            <p>${n.summary || ''}</p>
+            <a href='${n.url}' target='_blank'>Ver mais</a>
+          </div>
+        `).join(''); }
+
+        conteudo.innerHTML = html;
+        painel.classList.add('aberto');
+      }catch(err){ console.error(err); alert('Erro ao carregar dados do político.'); }
+    }
+
+    function createPainelPolitico(){
+      let painel = document.getElementById('painel-politico');
+      if(painel) return painel;
+      painel = document.createElement('div');
+      painel.id = 'painel-politico';
+      painel.innerHTML = `<button class='fechar-btn'>&times;</button><div id='conteudo-politico'></div>`;
+      document.body.appendChild(painel);
+      painel.querySelector('.fechar-btn').addEventListener('click', () => painel.classList.remove('aberto'));
+      return painel;
+    }
+  </script>
+</body>
+</html>

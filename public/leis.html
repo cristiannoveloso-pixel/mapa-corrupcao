@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Leis Anticorrupção — Brasil Transparente</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      background: #0f172a;
+      color: #e6eef8;
+      font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+      overflow-x: hidden;
+    }
+    .timeline {
+      position: relative;
+      margin-left: 2rem;
+      border-left: 2px solid rgba(255,255,255,0.1);
+      padding-left: 1.5rem;
+    }
+    .timeline::before {
+      content: "";
+      position: absolute;
+      left: -2px;
+      top: 0;
+      bottom: 0;
+      width: 2px;
+      background: rgba(255, 255, 255, 0.1);
+    }
+    .year-badge {
+      display: inline-block;
+      background: linear-gradient(90deg, #facc15, #fbbf24);
+      color: #111;
+      font-weight: bold;
+      padding: 4px 12px;
+      border-radius: 9999px;
+      margin: 1.5rem 0 0.5rem 0;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.25);
+    }
+    .entry {
+      margin-bottom: 1.5rem;
+      position: relative;
+      opacity: 0;
+      transform: translateY(40px);
+      transition: all 0.6s ease;
+    }
+    .entry.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .entry::before {
+      content: "";
+      position: absolute;
+      left: -1.7rem;
+      top: 0.6rem;
+      width: 10px;
+      height: 10px;
+      background: #facc15;
+      border-radius: 50%;
+    }
+    .card {
+      background: #fff;
+      color: #111827;
+      border-radius: 8px;
+      padding: 16px;
+      box-shadow: 0 6px 16px rgba(2, 6, 23, 0.06);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    a.link {
+      color: #2563eb;
+      text-decoration: underline;
+    }
+    a.link:hover {
+      color: #1d4ed8;
+    }
+  </style>
+</head>
+<body class="min-h-screen p-6">
+  <header class="mb-6">
+    <a href="index.html" class="text-sm text-gray-300 hover:text-white">&larr; Voltar</a>
+    <h1 class="text-3xl font-bold text-yellow-400 mt-3">Leis Anticorrupção</h1>
+    <p class="text-sm text-gray-400 mt-1">
+      Linha do tempo das principais leis e decretos que fortalecem o combate à corrupção no Brasil.
+    </p>
+  </header>
+
+  <main class="container mx-auto">
+    <div class="mb-4 flex flex-col md:flex-row gap-3 items-center">
+      <input id="search" placeholder="Pesquisar por nome, número ou ano..."
+        class="px-4 py-2 rounded w-full md:w-1/2 bg-gray-800 text-gray-200 border border-gray-700" />
+      <select id="filterTipo" class="px-3 py-2 rounded bg-gray-800 text-gray-200 border border-gray-700">
+        <option value="">Todos os tipos</option>
+        <option value="Lei">Leis</option>
+        <option value="Decreto">Decretos</option>
+      </select>
+    </div>
+    <div id="count" class="text-sm text-gray-300 mb-4"></div>
+    <div id="timeline" class="timeline"></div>
+  </main>
+
+  <footer class="text-center text-gray-400 text-sm py-6">
+    © 2025 Brasil Transparente — Todos contra a corrupção
+  </footer>
+
+  <script>
+    let leis = [];
+
+    async function loadData() {
+      try {
+        const res = await fetch('leis.json', { cache: 'no-store' });
+        leis = await res.json();
+        leis.sort((a, b) => parseInt(b.ano) - parseInt(a.ano));
+        render();
+      } catch (err) {
+        console.error(err);
+        document.getElementById('timeline').innerHTML =
+          '<p class="text-red-400">Erro ao carregar leis.</p>';
+      }
+    }
+
+    function render() {
+      const q = document.getElementById('search').value.toLowerCase();
+      const tipo = document.getElementById('filterTipo').value;
+
+      const filtradas = leis.filter(l => {
+        const matchBusca =
+          l.nome.toLowerCase().includes(q) ||
+          l.numero.toLowerCase().includes(q) ||
+          l.ano.toLowerCase().includes(q);
+        const matchTipo = !tipo || l.tipo === tipo;
+        return matchBusca && matchTipo;
+      });
+
+      document.getElementById('count').textContent =
+        `${filtradas.length} resultado(s) encontrado(s)`;
+
+      const grouped = {};
+      filtradas.forEach(l => {
+        if (!grouped[l.ano]) grouped[l.ano] = [];
+        grouped[l.ano].push(l);
+      });
+
+      const timeline = document.getElementById('timeline');
+      timeline.innerHTML = Object.keys(grouped)
+        .sort((a, b) => parseInt(b) - parseInt(a))
+        .map(ano => `
+          <div class="year-section">
+            <span class="year-badge">${ano}</span>
+            ${grouped[ano].map(l => `
+              <div class="entry">
+                <div class="card">
+                  <div class="flex items-center mb-2">
+                    <span class="text-2xl mr-2">${l.tipo === 'Lei' ? '⚖️' : '📜'}</span>
+                    <div>
+                      <h2 class="text-lg font-bold leading-tight">${l.nome}</h2>
+                      <p class="text-sm text-gray-600">${l.tipo} ${l.numero}/${l.ano}</p>
+                    </div>
+                  </div>
+                  <p class="text-sm text-gray-700 mb-3">${l.descricao}</p>
+                  <a href="${l.link}" target="_blank" class="link text-sm font-medium">Ver no site oficial</a>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        `).join('');
+
+      aplicarAnimacoes();
+    }
+
+    function aplicarAnimacoes() {
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('visible');
+              observer.unobserve(entry.target);
+            }
+          });
+        },
+        { threshold: 0.1 }
+      );
+      document.querySelectorAll('.entry').forEach(el => observer.observe(el));
+    }
+
+    document.getElementById('search').addEventListener('input', render);
+    document.getElementById('filterTipo').addEventListener('change', render);
+    loadData();
+  </script>
+</body>
+</html>

@@ -1,0 +1,275 @@
+{
+  "governadores": [
+    {
+      "uf": "AC",
+      "estado": "Acre",
+      "governador": "Gladson Cameli",
+      "partido": "PP",
+      "mandato": "2023-2026",
+      "vice": "Mailza Gomes",
+      "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f0/Retrato_oficial_Gladson_Cameli_2019.jpg/250px-Retrato_oficial_Gladson_Cameli_2019.jpg",
+      "bio": "Gladson de Lima Cameli é engenheiro e político brasileiro, atual governador do Acre; reeleito em 2022."
+    },
+    {
+      "uf": "AL",
+      "estado": "Alagoas",
+      "governador": "Paulo Dantas",
+      "partido": "MDB",
+      "mandato": "2023-2026",
+      "vice": "Ronaldo Lessa",
+      "foto": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b3/Paulo_Dantas_Foto_Oficial_%28cropped%29.jpg/250px-Paulo_Dantas_Foto_Oficial_%28cropped%29.jpg",
+      "bio": "Paulo Suruagy do Amaral Dantas é político brasileiro (MDB), governador de Alagoas desde 2022."
+    },
+    {
+      "uf": "AP",
+      "estado": "Amapá",
+      "governador": "Clécio Luís",
+      "partido": "Solidariedade",
+      "mandato": "2023-2026",
+      "vice": "Teles Junior",
+      "foto": "",
+      "bio": ""
+    },
+    {
+      "uf": "AM",
+      "estado": "Amazonas",
+      "governador": "Wilson Lima",
+      "partido": "UNIÃO",
+      "mandato": "2023-2026",
+      "vice": "Tadeu de Souza",
+      "foto": "",
+      "bio": ""
+    },
+    {
+      "uf": "BA",
+      "estado": "Bahia",
+      "governador": "Jerônimo Rodrigues",
+      "partido": "PT",
+      "mandato": "2023-2026",
+      "vice": "Geraldo Júnior",
+      "foto": "",
+      "bio": ""
+    },
+    {
+      "uf": "CE",
+      "estado": "Ceará",
+      "governador": "Elmano de Freitas",
+      "partido": "PT",
+      "mandato": "2023-2026",
+      "vice": "Jade Romero",
+      "foto": "",
+      "bio": ""
+    },
+    {
+      "uf": "DF",
+      "estado": "Distrito Federal",
+      "governador": "Ibaneis Rocha",
+      "partido": "MDB",
+      "mandato": "2023-2026",
+      "vice": "Celina Leão",
+      "foto": "",
+      "bio": ""
+    },
+    {
+      "uf": "ES",
+      "estado": "Espírito Santo",
+      "governador": "Renato Casagrande",
+      "partido": "PSB",
+      "mandato": "2023-2026",
+      "vice": "Ricardo Ferraço",
+      "foto": "",
+      "bio": ""
+    },
+    {
+      "uf": "GO",
+      "estado": "Goiás",
+      "governador": "Ronaldo Caiado",
+      "partido": "UNIÃO",
+      "mandato": "2023-2026",
+      "vice": "Daniel Vilela",
+      "foto": "",
+      "bio": ""
+    },
+    {
+      "uf": "MA",
+      "estado": "Maranhão",
+      "governador": "Carlos Brandão",
+      "partido": "PSB",
+      "mandato": "2023-2026",
+      "vice": "Felipe Camarão",
+      "foto": "",
+      "bio": ""
+    },
+    {
+      "uf": "MT",
+      "estado": "Mato Grosso",
+      "governador": "Mauro Mendes",
+      "partido": "UNIÃO",
+      "mandato": "2023-2026",
+      "vice": "Otaviano Pivetta",
+      "foto": "",
+      "bio": ""
+    },
+    {
+      "uf": "MS",
+      "estado": "Mato Grosso do Sul",
+      "governador": "Eduardo Riedel",
+      "partido": "PP",
+      "mandato": "2023-2026",
+      "vice": "José Carlos Barbosa",
+      "foto": "",
+      "bio": ""
+    },
+    {
+      "uf": "MG",
+      "estado": "Minas Gerais",
+      "governador": "Romeu Zema",
+      "partido": "NOVO",
+      "mandato": "2023-2026",
+      "vice": "Mateus Simões",
+      "foto": "",
+      "bio": ""
+    },
+    {
+      "uf": "PA",
+      "estado": "Pará",
+      "governador": "Helder Barbalho",
+      "partido": "MDB",
+      "mandato": "2023-2026",
+      "vice": "Hana Ghassan",
+      "foto": "",
+      "bio": ""
+    },
+    {
+      "uf": "PB",
+      "estado": "Paraíba",
+      "governador": "João Azevêdo",
+      "partido": "PSB",
+      "mandato": "2023-2026",
+      "vice": "Lucas Ribeiro",
+      "foto": "",
+      "bio": ""
+    },
+    {
+      "uf": "PR",
+      "estado": "Paraná",
+      "governador": "Ratinho Júnior",
+      "partido": "PSD",
+      "mandato": "2023-2026",
+      "vice": "Darci Piana",
+      "foto": "",
+      "bio": ""
+    },
+    {
+      "uf": "PE",
+      "estado": "Pernambuco",
+      "governador": "Raquel Lyra",
+      "partido": "PSD",
+      "mandato": "2023-2026",
+      "vice": "Priscila Krause",
+      "foto": "",
+      "bio": ""
+    },
+    {
+      "uf": "PI",
+      "estado": "Piauí",
+      "governador": "Rafael Fonteles",
+      "partido": "PT",
+      "mandato": "2023-2026",
+      "vice": "Themístocles Filho",
+      "foto": "",
+      "bio": ""
+    },
+    {
+      "uf": "RJ",
+      "estado": "Rio de Janeiro",
+      "governador": "Cláudio Castro",
+      "partido": "PL",
+      "mandato": "2023-2026",
+      "vice": "Thiago Pampolha",
+      "foto": "",
+      "bio": ""
+    },
+    {
+      "uf": "RN",
+      "estado": "Rio Grande do Norte",
+      "governador": "Fátima Bezerra",
+      "partido": "PT",
+      "mandato": "2023-2026",
+      "vice": "Walter Alves",
+      "foto": "",
+      "bio": ""
+    },
+    {
+      "uf": "RS",
+      "estado": "Rio Grande do Sul",
+      "governador": "Eduardo Leite",
+      "partido": "PSD",
+      "mandato": "2023-2026",
+      "vice": "Gabriel Souza",
+      "foto": "",
+      "bio": ""
+    },
+    {
+      "uf": "RO",
+      "estado": "Rondônia",
+      "governador": "Coronel Marcos Rocha",
+      "partido": "UNIÃO",
+      "mandato": "2023-2026",
+      "vice": "Sérgio Gonçalves",
+      "foto": "",
+      "bio": ""
+    },
+    {
+      "uf": "RR",
+      "estado": "Roraima",
+      "governador": "Antonio Denarium",
+      "partido": "PP",
+      "mandato": "2023-2026",
+      "vice": "Edilson Damião",
+      "foto": "",
+      "bio": ""
+    },
+    {
+      "uf": "SC",
+      "estado": "Santa Catarina",
+      "governador": "Jorginho Mello",
+      "partido": "PL",
+      "mandato": "2023-2026",
+      "vice": "Marilisa Boehm",
+      "foto": "",
+      "bio": ""
+    },
+    {
+      "uf": "SP",
+      "estado": "São Paulo",
+      "governador": "Tarcísio de Freitas",
+      "partido": "Republicanos",
+      "mandato": "2023-2026",
+      "vice": "Felicio Ramuth",
+      "foto": "",
+      "bio": ""
+    },
+    {
+      "uf": "SE",
+      "estado": "Sergipe",
+      "governador": "Fábio Mitidieri",
+      "partido": "PSD",
+      "mandato": "2023-2026",
+      "vice": "Zezinho Sobral",
+      "foto": "",
+      "bio": ""
+    },
+    {
+      "uf": "TO",
+      "estado": "Tocantins",
+      "governador": "Wanderlei Barbosa",
+      "partido": "Republicanos",
+      "mandato": "2023-2026",
+      "vice": "Laurez Moreira",
+      "foto": "",
+      "bio": ""
+    }
+  ],
+  "source": "Wikipédia (compilado)"
+}

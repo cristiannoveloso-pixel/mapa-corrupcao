@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Cidades do Brasil — Busca</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body { background:#0b1220; color:#e6eef8; font-family:Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial; }
+    .card { background:#0f172a; border:1px solid #111827; padding:12px; border-radius:8px; }
+    .city-item { padding:8px; border-bottom:1px solid rgba(255,255,255,0.03); }
+  </style>
+</head>
+<body class="min-h-screen">
+  <header class="p-6 bg-gray-900">
+    <div class="container mx-auto">
+      <h1 class="text-2xl font-bold">Cidades do Brasil</h1>
+      <p class="text-sm text-gray-400">Pesquisa por nome — carregando a base completa (~5.570 municípios) via API pública do IBGE.</p>
+    </div>
+  </header>
+
+  <main class="container mx-auto p-6">
+    <div class="card">
+      <div class="flex gap-3 items-center mb-4">
+        <input id="search" placeholder="Digite parte do nome da cidade..." class="px-3 py-2 rounded bg-gray-800 w-full"/>
+        <select id="filterUF" class="px-3 py-2 rounded bg-gray-800">
+          <option value="">Filtrar por UF</option>
+        </select>
+        <div id="count" class="px-3 py-2 text-sm">—</div>
+      </div>
+      <div id="citiesList" style="max-height:560px; overflow:auto;"></div>
+    </div>
+  </main>
+
+  <footer class="text-center text-sm text-gray-400 p-6">Fonte: IBGE - Serviço de Dados (consulta dinâmica)</footer>
+
+  <script>
+    let cities = [];
+    const ufMap = {
+      "RO":"Rondônia","AC":"Acre","AM":"Amazonas","RR":"Roraima","PA":"Pará","AP":"Amapá","TO":"Tocantins","MA":"Maranhão","PI":"Piauí","CE":"Ceará","RN":"Rio Grande do Norte",
+      "PB":"Paraíba","PE":"Pernambuco","AL":"Alagoas","SE":"Sergipe","BA":"Bahia","MG":"Minas Gerais","ES":"Espírito Santo","RJ":"Rio de Janeiro","SP":"São Paulo","PR":"Paraná","SC":"Santa Catarina","RS":"Rio Grande do Sul","MS":"Mato Grosso do Sul","MT":"Mato Grosso","GO":"Goiás","DF":"Distrito Federal"
+    };
+
+    function renderUFs(){
+      const sel = document.getElementById('filterUF');
+      Object.entries(ufMap).forEach(([k,v])=> {
+        const o = document.createElement('option'); o.value=k; o.textContent = `${v} (${k})`; sel.appendChild(o);
+      });
+    }
+
+    function renderList(list){
+      const container = document.getElementById('citiesList');
+      container.innerHTML='';
+      list.forEach(c=>{
+        const d = document.createElement('div'); d.className='city-item';
+        d.innerHTML = `<strong>${c.nome}</strong> — <span style="color:#9ca3af">${c.microrregiao && c.microrregiao.mesorregiao && c.microrregiao.mesorregiao.UF ? c.microrregiao.mesorregiao.UF.sigla : ''}</span>`;
+        container.appendChild(d);
+      });
+      document.getElementById('count').textContent = `${list.length} cidade(s)`;
+    }
+
+    async function fetchCities(){
+      try{
+        const resp = await fetch('https://servicodados.ibge.gov.br/api/v1/localidades/municipios');
+        cities = await resp.json();
+        renderUFs();
+        renderList(cities);
+      }catch(e){
+        document.getElementById('citiesList').innerHTML = '<p class="text-red-400">Erro ao carregar a lista de cidades via IBGE. Verifique sua conexão.</p>';
+        console.error(e);
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', ()=>{
+      fetchCities();
+      document.getElementById('search').addEventListener('input', (e)=>{
+        const q = e.target.value.toLowerCase();
+        const uf = document.getElementById('filterUF').value;
+        const filtered = cities.filter(c => c.nome.toLowerCase().includes(q) && (uf ? (c.microrregiao && c.microrregiao.mesorregiao && c.microrregiao.mesorregiao.UF ? c.microrregiao.mesorregiao.UF.sigla === uf : true) : true));
+        renderList(filtered);
+      });
+      document.getElementById('filterUF').addEventListener('change', ()=>{
+        document.getElementById('search').dispatchEvent(new Event('input'));
+      });
+    });
+  </script>
+</body>
+</html>

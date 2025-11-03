@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Mapa Político do Brasil - Casos de Corrupção</title>
+
+  <!-- Leaflet -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+  <style>
+    body { margin:0; font-family:Poppins,Arial; background:#0f172a; color:#e2e8f0; text-align:center; }
+    #map { height: 520px; width:90%; max-width:1100px; margin:20px auto; border-radius:8px; box-shadow:0 0 20px rgba(0,0,0,0.3); }
+    #total-casos { width:90%; max-width:1100px; margin:20px auto 0; padding:10px; background:#1e293b; border-radius:8px; border:1px solid #334155; color:#facc15; font-weight:600; }
+    #cases-container { width:90%; max-width:1100px; margin:16px auto 40px; background:#1e293b; padding:12px; border-radius:8px; border:1px solid #334155; max-height:300px; overflow:auto; text-align:left; }
+    .case-card { background:#2d3748; padding:10px; border-radius:6px; margin-bottom:8px; }
+    .tooltip-estado { background:#1f2937 !important; color:#facc15 !important; font-weight:600; border-radius:4px; padding:4px 8px; border:1px solid #facc15; }
+  </style>
+</head>
+<body>
+  <div id="total-casos">🧾 Total de casos de corrupção registrados no Brasil: <strong id="total-num">0</strong></div>
+  <div id="map"></div>
+  <div id="cases-container"><em>Selecione um estado no mapa para ver os casos.</em></div>
+
+<script>
+// ---------- Dados de exemplo ----------
+const casosData = [
+  { "state":"Bahia","city":"Salvador","year":2024,"title":"Desvio em obras","summary":"Resumo do caso A.","source":"https://g1.globo.com" },
+  { "state":"Bahia","city":"Feira de Santana","year":2022,"title":"Fraude em licitação","summary":"Resumo do caso B.","source":"https://bbc.com" },
+  { "state":"São Paulo","city":"São Paulo","year":2023,"title":"Corrupção obra municipal","summary":"Resumo do caso C.","source":"https://folha.uol.com.br" },
+  { "state":"Rio de Janeiro","city":"Niterói","year":2021,"title":"Contrato suspeito","summary":"Resumo do caso D.","source":"https://g1.globo.com" }
+];
+
+// ---------- Cores baseadas em número de casos ----------
+function getColor(qtd) {
+  if (qtd === 0) return "#1e40af";  // azul escuro (nenhum caso)
+  if (qtd <= 2) return "#2563eb";   // azul médio
+  if (qtd <= 4) return "#facc15";   // amarelo
+  return "#dc2626";                 // vermelho (muitos casos)
+}
+
+// ---------- Atualiza contador total ----------
+function atualizarContador() {
+  document.getElementById("total-num").textContent = casosData.length;
+}
+
+// ---------- Exibe lista de casos ----------
+function exibirCasos(casos, stateName) {
+  const div = document.getElementById("cases-container");
+  div.innerHTML = `<h3 style="color:#facc15;">Casos em ${stateName}</h3>`;
+  if (!casos.length) return div.innerHTML += `<p style="color:#94a3b8;">Nenhum caso registrado.</p>`;
+  casos.forEach(c=>{
+    const card=document.createElement("div");
+    card.className="case-card";
+    card.innerHTML=`<h4 style="color:#facc15;">${c.title}</h4>
+      <p><strong>${c.city}</strong> — ${c.year}</p>
+      <p>${c.summary}</p>
+      <a href="${c.source}" target="_blank" style="color:#60a5fa;">Fonte oficial</a>`;
+    div.appendChild(card);
+  });
+}
+
+// ---------- Inicializa o mapa político ----------
+const map = L.map("map", { zoomControl:false, attributionControl:false }).setView([-14.2, -51.9], 4);
+
+// Fundo liso azul escuro (sem ruas)
+L.rectangle([[-33, -75], [5, -30]], {color:'#0f172a', fillColor:'#0f172a', weight:0}).addTo(map);
+
+fetch("https://raw.githubusercontent.com/codeforamerica/click_that_hood/master/public/data/brazil-states.geojson")
+.then(r=>r.json())
+.then(geojson=>{
+  L.geoJSON(geojson,{
+    style: feature=>{
+      const nome = feature.properties.name;
+      const qtd = casosData.filter(x=>x.state===nome).length;
+      return {
+        color:"#facc15",
+        weight:1.2,
+        fillColor:getColor(qtd),
+        fillOpacity:0.8
+      };
+    },
+    onEachFeature:(feature,layer)=>{
+      const nome = feature.properties.name;
+      const qtd = casosData.filter(x=>x.state===nome).length;
+      layer.bindTooltip(`${nome} — ${qtd} caso${qtd!==1?"s":""}`,
+        {direction:"top",className:"tooltip-estado",offset:[0,-10]});
+      layer.on("click",()=>exibirCasos(casosData.filter(x=>x.state===nome),nome));
+      layer.on("mouseover",()=>layer.setStyle({fillOpacity:1}));
+      layer.on("mouseout",()=>layer.setStyle({fillOpacity:0.8}));
+    }
+  }).addTo(map);
+  atualizarContador();
+});
+</script>
+</body>
+</html>

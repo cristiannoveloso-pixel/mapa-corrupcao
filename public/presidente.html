@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Presidente — Brasil Transparente</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+body{background:#0f172a;color:#e6eef8;font-family:Inter,system-ui,-apple-system,'Segoe UI',Roboto,'Helvetica Neue',Arial}
+.card{background:#fff;color:#111827;border-radius:8px;padding:12px;box-shadow:0 6px 16px rgba(2,6,23,0.06);display:flex;flex-direction:column;gap:10px;align-items:center;text-align:center}
+.avatar{width:100px;height:100px;border-radius:6px;object-fit:cover;border:1px solid #e5e7eb}
+</style>
+</head>
+<body class="min-h-screen p-6">
+<header class="mb-6">
+  <a href="index.html" class="text-sm text-gray-300 hover:text-white">&larr; Voltar</a>
+  <h1 class="text-3xl font-bold text-yellow-400 mt-3">Presidente</h1>
+  <p class="text-sm text-gray-400 mt-1">Exibindo todos os presidentes do Brasil (1989–2025). Use busca e filtros para refinar.</p>
+</header>
+
+<main class="container mx-auto">
+  <div class="mb-4 flex flex-col md:flex-row gap-3 items-center">
+    <input id="search" placeholder="Pesquisar por nome ou partido..." class="px-4 py-2 rounded w-full md:w-1/2 bg-gray-800 text-gray-200 border border-gray-700" />
+    <select id="filterPartido" class="px-3 py-2 rounded bg-gray-800 text-gray-200 border border-gray-700">
+      <option value="">Todos os partidos</option>
+    </select>
+  </div>
+  <div id="count" class="text-sm text-gray-300 mb-3"></div>
+  <div id="list" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+</main>
+
+<script>
+let presidentes = [];
+
+async function loadData(){
+  try{
+    const res = await fetch('presidentes.json', {cache:'no-store'});
+    presidentes = await res.json();
+    preencherFiltros();
+    render();
+  }catch(e){
+    console.error(e);
+    document.getElementById('list').innerHTML = '<p class="text-red-400">Erro ao carregar dados.</p>';
+  }
+}
+
+function preencherFiltros(){
+  const select = document.getElementById('filterPartido');
+  const partidos = [...new Set(presidentes.map(p => p.partido))].filter(Boolean);
+  partidos.sort();
+  partidos.forEach(pt => {
+    const opt = document.createElement('option');
+    opt.value = pt;
+    opt.textContent = pt;
+    select.appendChild(opt);
+  });
+}
+
+function render(){
+  const q = document.getElementById('search').value.toLowerCase();
+  const filtroPartido = document.getElementById('filterPartido').value;
+  const filtrados = presidentes.filter(p=>{
+    const nome = (p.nome||'').toLowerCase();
+    const partido = (p.partido||'').toLowerCase();
+    const matchNome = nome.includes(q) || partido.includes(q);
+    const matchPartido = !filtroPartido || p.partido === filtroPartido;
+    return matchNome && matchPartido;
+  });
+
+  document.getElementById('count').textContent = `${filtrados.length} presidente(s) encontrado(s)`;
+
+  const list = document.getElementById('list');
+  list.innerHTML = filtrados.map(p=>`
+    <div class="card">
+      <img src="${p.foto}" alt="${p.nome}" class="avatar">
+      <h2 class="text-lg font-bold">${p.nome}</h2>
+      <p class="text-sm text-gray-600">${p.partido}</p>
+      <p class="text-sm text-gray-500">${p.mandato}</p>
+      <p class="text-sm text-gray-700">${p.bio}</p>
+    </div>
+  `).join('');
+}
+
+document.getElementById('search').addEventListener('input', render);
+document.getElementById('filterPartido').addEventListener('change', render);
+
+loadData();
+</script>
+</body>
+</html>

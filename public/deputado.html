@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Deputado — Brasil Transparente</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>body{background:#0f172a;color:#e6eef8;font-family:Inter,system-ui,-apple-system,'Segoe UI',Roboto,'Helvetica Neue',Arial}.card{background:#fff;color:#111827;border-radius:8px;padding:12px;box-shadow:0 6px 16px rgba(2,6,23,0.06);display:flex;gap:12px;align-items:center}.avatar{width:72px;height:72px;border-radius:6px;object-fit:cover;border:1px solid #e5e7eb}</style>
+</head>
+<body class="min-h-screen p-6">
+<header class="mb-6">
+  <a href="index.html" class="text-sm text-gray-300 hover:text-white">&larr; Voltar</a>
+  <h1 class="text-3xl font-bold text-yellow-400 mt-3">Deputado</h1>
+  <p class="text-sm text-gray-400 mt-1">Exibindo lista de deputados. Use busca e filtros para refinar.</p>
+</header>
+<main class="container mx-auto">
+  <div class="mb-4 flex gap-3 items-center">
+    <input id="search" placeholder="Pesquisar por nome, partido ou estado..." class="input-search px-4 py-2 rounded w-full" />
+    <select id="filterStatus" class="px-3 py-2 rounded bg-gray-800">
+      <option value="">Todos</option>
+      <option value="Em exercício">Em exercício</option>
+      <option value="Ex-deputado">Ex</option>
+    </select>
+  </div>
+  <div id="count" class="text-sm text-gray-300 mb-2"></div>
+  <div id="list" class="grid gap-4"></div>
+  <div id="pagination" class="mt-6"></div>
+</main>
+
+<script>
+const ROLE = "deputado"; // role filter
+let items = [];
+
+// load politicos.json and normalize into a list
+async function loadData(){
+  try{
+    const res = await fetch('politicos.json', {cache:'no-store'});
+    const j = await res.json();
+    const arr = [];
+    // federal
+    if(j.federal) for(const k of Object.keys(j.federal)){ const it = j.federal[k]; it._source='federal'; arr.push(it); }
+    // tocantins
+    if(j.tocantins){
+      const toc = j.tocantins;
+      ['governador','vice_governador'].forEach(k=>{ if(toc[k]){ const it=toc[k]; it._source='tocantins'; arr.push(it); } });
+      if(Array.isArray(toc.senadores)) toc.senadores.forEach(s=>{ s._source='tocantins'; arr.push(s); });
+      if(Array.isArray(toc.prefeitos_principais)) toc.prefeitos_principais.forEach(p=>{ p._source='tocantins'; arr.push(p); });
+    }
+    items = arr.map(it=>{ return Object.assign({nome: it.nome || '-', cargo: it.cargo || ROLE, partido: it.partido||'', periodo: it.periodo||'', status: it.status||''}, it); });
+    render();
+  }catch(e){ console.error(e); document.getElementById('list').innerHTML = '<p class="text-red-400">Erro ao carregar dados.</p>'; }
+}
+
+function matchesRole(item){
+  const r = ROLE.toLowerCase();
+  const c = (item.cargo||'').toLowerCase();
+  // basic matching by keywords
+  if(r==='presidente' && c.includes('presidente')) return true;
+  if(r==='governador' && c.includes('governador')) return true;
+  if(r==='senador' && c.includes('senador')) return true;
+  if(r==='deputado' && c.includes('deputad')) return true;
+  if(r==='prefeito' && c.includes('prefeit')) return true;
+  if(r==='vereador' && c.includes('vereador')) return true;
+  return false;
+}
+
+function render(){
+  const q = document.getElementById('search').value.toLowerCase();
+  const status = document.getElementById('filterStatus').value;
+  let filtered = items.filter(it=> matchesRole(it) && (q==='' || (it.nome && it.nome.toLowerCase().includes(q)) || (it.partido && it.partido.toLowerCase().includes(q)) ) );
+  if(status) filtered = filtered.filter(it=> (it.status||'').includes(status));
+  document.getElementById('count').textContent = `Exibindo ${filtered.length} resultado(s).`;
+  const container = document.getElementById('list');
+  container.innerHTML='';
+  filtered.forEach(it=>{
+    const div = document.createElement('div');
+    div.className='card';
+    const img = document.createElement('img');
+    img.className='avatar';
+    img.src = it.foto || 'https://via.placeholder.com/96x96.png?text=Sem+foto';
+    img.alt = it.nome || '';
+    const inner = document.createElement('div');
+    inner.innerHTML = `<h3 class="text-lg font-semibold text-green-700">${'{'}it.nome{'}'} <span class="text-sm text-gray-500">(${ '{'}it.partido||''{'}'})</span></h3>
+      <div class="text-sm mt-1 text-gray-600">${'{'}it.cargo{'}'}</div>
+      <div class="text-sm mt-2 text-gray-700">${'{'}it.periodo? it.periodo : ''{'}'}</div>`;
+    div.appendChild(img); div.appendChild(inner);
+    container.appendChild(div);
+  });
+}
+
+document.getElementById('search').addEventListener('input', render);
+document.getElementById('filterStatus').addEventListener('change', render);
+
+loadData();
+</script>
+
+</body>
+</html>

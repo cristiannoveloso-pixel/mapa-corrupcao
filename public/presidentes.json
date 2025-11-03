@@ -1,0 +1,65 @@
+[
+  {
+    "nome": "Luiz Inácio Lula da Silva",
+    "partido": "PT",
+    "mandato": "2023–2026",
+    "foto": "https://upload.wikimedia.org/wikipedia/commons/9/91/Foto_oficial_do_Presidente_da_Rep%C3%BAblica_Luiz_In%C3%A1cio_Lula_da_Silva.jpg",
+    "bio": "Lula é o 39º presidente do Brasil, líder sindical e fundador do Partido dos Trabalhadores. Retornou à Presidência em 2023 após dois mandatos entre 2003 e 2010."
+  },
+  {
+    "nome": "Jair Bolsonaro",
+    "partido": "PL",
+    "mandato": "2019–2022",
+    "foto": "https://upload.wikimedia.org/wikipedia/commons/0/00/Jair_Bolsonaro_%28cropped%29.jpg",
+    "bio": "Capitão reformado do Exército, Jair Bolsonaro foi deputado federal por 28 anos antes de se eleger presidente em 2018. Seu governo foi marcado por pautas conservadoras e crises políticas."
+  },
+  {
+    "nome": "Michel Temer",
+    "partido": "MDB",
+    "mandato": "2016–2018",
+    "foto": "https://upload.wikimedia.org/wikipedia/commons/6/6b/Michel_Temer_%28cropped%29.jpg",
+    "bio": "Vice de Dilma Rousseff, Michel Temer assumiu a Presidência após o impeachment dela em 2016. Jurista e político experiente, liderou um governo de transição até 2018."
+  },
+  {
+    "nome": "Dilma Rousseff",
+    "partido": "PT",
+    "mandato": "2011–2016",
+    "foto": "https://upload.wikimedia.org/wikipedia/commons/3/3f/Dilma_Rousseff_-_foto_oficial_2015.jpg",
+    "bio": "Primeira mulher presidente do Brasil, Dilma Rousseff foi ministra e chefe da Casa Civil antes de ser eleita. Sofreu impeachment em 2016, encerrando seu segundo mandato."
+  },
+  {
+    "nome": "Luiz Inácio Lula da Silva",
+    "partido": "PT",
+    "mandato": "2003–2010",
+    "foto": "https://upload.wikimedia.org/wikipedia/commons/6/63/Lula_-_foto_oficial_2007.jpg",
+    "bio": "Líder sindical e fundador do PT, Lula foi o primeiro presidente oriundo da classe trabalhadora. Seus dois mandatos focaram em políticas sociais e crescimento econômico."
+  },
+  {
+    "nome": "Fernando Henrique Cardoso",
+    "partido": "PSDB",
+    "mandato": "1995–2002",
+    "foto": "https://upload.wikimedia.org/wikipedia/commons/4/4d/Fernando_Henrique_Cardoso_%28cropped%29.jpg",
+    "bio": "Sociólogo e um dos criadores do Plano Real, FHC consolidou a estabilidade econômica e promoveu reformas estruturais em seus dois mandatos consecutivos."
+  },
+  {
+    "nome": "Itamar Franco",
+    "partido": "PMDB",
+    "mandato": "1992–1994",
+    "foto": "https://upload.wikimedia.org/wikipedia/commons/9/9e/Itamar_Franco_%28cropped%29.jpg",
+    "bio": "Assumiu após o impeachment de Collor e conduziu o país com estabilidade. Seu governo foi marcado pela criação do Plano Real e pela transição pacífica ao governo FHC."
+  },
+  {
+    "nome": "Fernando Collor de Mello",
+    "partido": "PRN",
+    "mandato": "1990–1992",
+    "foto": "https://upload.wikimedia.org/wikipedia/commons/1/13/Fernando_Collor_de_Mello_%28cropped%29.jpg",
+    "bio": "Primeiro presidente eleito por voto direto após a ditadura, Collor prometeu modernizar o país, mas renunciou em 1992 em meio a um processo de impeachment por corrupção."
+  },
+  {
+    "nome": "José Sarney",
+    "partido": "PMDB",
+    "mandato": "1985–1990",
+    "foto": "https://upload.wikimedia.org/wikipedia/commons/3/3e/Jos%C3%A9_Sarney_-_foto_oficial_1989.jpg",
+    "bio": "Assumiu após a morte de Tancredo Neves, liderando a transição democrática do Brasil. Seu governo marcou o fim da ditadura e o início da Nova República."
+  }
+]

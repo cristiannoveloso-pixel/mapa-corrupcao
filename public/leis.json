@@ -1,0 +1,82 @@
+[
+  {
+    "tipo": "Lei",
+    "numero": "12.846",
+    "ano": "2013",
+    "nome": "Lei Anticorrupção (Lei da Empresa Limpa)",
+    "descricao": "Responsabiliza empresas por atos de corrupção contra a administração pública nacional ou estrangeira.",
+    "link": "https://www.planalto.gov.br/ccivil_03/_ato2011-2014/2013/lei/l12846.htm"
+  },
+  {
+    "tipo": "Lei",
+    "numero": "8.429",
+    "ano": "1992",
+    "nome": "Lei de Improbidade Administrativa",
+    "descricao": "Define sanções aplicáveis a agentes públicos que cometam atos de improbidade administrativa.",
+    "link": "https://www.planalto.gov.br/ccivil_03/leis/l8429.htm"
+  },
+  {
+    "tipo": "Lei",
+    "numero": "9.613",
+    "ano": "1998",
+    "nome": "Lei de Lavagem de Dinheiro",
+    "descricao": "Dispõe sobre os crimes de lavagem de dinheiro e cria mecanismos de prevenção e repressão.",
+    "link": "https://www.planalto.gov.br/ccivil_03/leis/l9613.htm"
+  },
+  {
+    "tipo": "Lei",
+    "numero": "8.730",
+    "ano": "1993",
+    "nome": "Lei da Declaração de Bens",
+    "descricao": "Obriga agentes públicos a declararem seus bens ao assumir e ao deixar cargos.",
+    "link": "https://www.planalto.gov.br/ccivil_03/leis/l8730.htm"
+  },
+  {
+    "tipo": "Decreto",
+    "numero": "8.420",
+    "ano": "2015",
+    "nome": "Regulamentação da Lei Anticorrupção",
+    "descricao": "Define procedimentos de responsabilização e sanções administrativas a empresas.",
+    "link": "https://www.planalto.gov.br/ccivil_03/_ato2015-2018/2015/decreto/d8420.htm"
+  },
+  {
+    "tipo": "Lei",
+    "numero": "10.467",
+    "ano": "2002",
+    "nome": "Alterações na Lei de Improbidade",
+    "descricao": "Ajusta dispositivos da Lei 8.429/92 para ampliar a responsabilização de agentes públicos.",
+    "link": "https://www.planalto.gov.br/ccivil_03/leis/2002/l10467.htm"
+  },
+  {
+    "tipo": "Lei",
+    "numero": "14.230",
+    "ano": "2021",
+    "nome": "Nova Lei de Improbidade Administrativa",
+    "descricao": "Atualiza a Lei 8.429/92, introduzindo novas definições, garantias e punições.",
+    "link": "https://www.planalto.gov.br/ccivil_03/_ato2019-2022/2021/lei/L14230.htm"
+  },
+  {
+    "tipo": "Lei",
+    "numero": "13.608",
+    "ano": "2018",
+    "nome": "Lei do Canal de Denúncias",
+    "descricao": "Cria canais de denúncia e prevê recompensas por informações sobre crimes e corrupção.",
+    "link": "https://www.planalto.gov.br/ccivil_03/_ato2015-2018/2018/lei/l13608.htm"
+  },
+  {
+    "tipo": "Lei",
+    "numero": "13.964",
+    "ano": "2019",
+    "nome": "Pacote Anticrime",
+    "descricao": "Conjunto de medidas contra corrupção, crime organizado e lavagem de dinheiro.",
+    "link": "https://www.planalto.gov.br/ccivil_03/_ato2019-2022/2019/lei/L13964.htm"
+  },
+  {
+    "tipo": "Decreto",
+    "numero": "11.129",
+    "ano": "2022",
+    "nome": "Novo Decreto da Lei Anticorrupção",
+    "descricao": "Atualiza e substitui o Decreto 8.420, redefinindo parâmetros de integridade corporativa.",
+    "link": "https://www.planalto.gov.br/ccivil_03/_ato2019-2022/2022/decreto/d11129.htm"
+  }
+]

@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Adicionar Caso de Corrupção</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<script>
+const senhaCorreta = "12345";
+const senha = sessionStorage.getItem("acessoAutorizado");
+
+if (senha !== senhaCorreta) {
+  const tentativa = prompt("🔒 Digite a senha de administrador:");
+  if (tentativa === senhaCorreta) {
+    sessionStorage.setItem("acessoAutorizado", senhaCorreta);
+  } else {
+    alert("Acesso negado.");
+    window.location.href = "index.html";
+  }
+}
+</script>
+
+<body class="bg-slate-900 text-gray-100 font-[Poppins,sans-serif] p-6">
+
+  <!-- 🔙 Botão Voltar ao Mapa -->
+  <div class="flex justify-end mb-4">
+    <a href="index.html"
+       class="bg-yellow-500 hover:bg-yellow-400 text-black font-semibold py-2 px-4 rounded-lg transition flex items-center gap-2 shadow-md">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+      </svg>
+      Voltar ao Mapa
+    </a>
+  </div>
+
+  <div class="max-w-2xl mx-auto bg-slate-800 p-6 rounded-lg shadow-lg">
+    <h1 class="text-2xl font-bold text-yellow-400 mb-4">Cadastrar Novo Caso</h1>
+
+    <form id="caseForm" class="space-y-4">
+      <div>
+        <label class="block text-sm font-medium mb-1">Título *</label>
+        <input name="title" type="text" required class="w-full p-2 rounded bg-slate-700 border border-slate-600" />
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium mb-1">Resumo</label>
+        <textarea name="summary" rows="3" class="w-full p-2 rounded bg-slate-700 border border-slate-600"></textarea>
+      </div>
+
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <label class="block text-sm font-medium mb-1">Estado *</label>
+          <input name="state" type="text" placeholder="Ex: Pará" required class="w-full p-2 rounded bg-slate-700 border border-slate-600" />
+        </div>
+        <div>
+          <label class="block text-sm font-medium mb-1">Região</label>
+          <select name="region" class="w-full p-2 rounded bg-slate-700 border border-slate-600">
+            <option value="">Selecione</option>
+            <option>Norte</option>
+            <option>Nordeste</option>
+            <option>Centro-Oeste</option>
+            <option>Sudeste</option>
+            <option>Sul</option>
+          </select>
+        </div>
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium mb-1">Município</label>
+        <input name="municipality" type="text" placeholder="Ex: Belém" class="w-full p-2 rounded bg-slate-700 border border-slate-600" />
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium mb-1">Órgão / Entidade</label>
+        <input name="organization" type="text" placeholder="Ex: Prefeitura de Belém" class="w-full p-2 rounded bg-slate-700 border border-slate-600" />
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium mb-1">Valor Estimado</label>
+        <input name="value_estimated" type="text" placeholder="Ex: R$ 10.000.000" class="w-full p-2 rounded bg-slate-700 border border-slate-600" />
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium mb-1">Status</label>
+        <input name="status" type="text" placeholder="Ex: Em andamento, Concluído..." class="w-full p-2 rounded bg-slate-700 border border-slate-600" />
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium mb-1">Data</label>
+        <input name="date" type="date" class="w-full p-2 rounded bg-slate-700 border border-slate-600" />
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium mb-1">Fonte</label>
+        <input name="source" type="text" placeholder="Ex: MPF, CGU, PF..." class="w-full p-2 rounded bg-slate-700 border border-slate-600" />
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium mb-1">URL da notícia *</label>
+        <input name="url" type="url" placeholder="https://..." required class="w-full p-2 rounded bg-slate-700 border border-slate-600" />
+      </div>
+
+      <button type="submit" class="w-full bg-yellow-500 text-black font-semibold py-2 px-4 rounded hover:bg-yellow-400 transition">
+        Salvar Caso
+      </button>
+
+      <p id="msg" class="text-center mt-4"></p>
+    </form>
+  </div>
+
+  <script>
+    const form = document.getElementById('caseForm');
+    const msg = document.getElementById('msg');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      msg.textContent = "⏳ Enviando...";
+      msg.className = "text-gray-300 text-center mt-4";
+
+      const data = Object.fromEntries(new FormData(form));
+
+      // ✅ Validação da URL
+      if (!data.url || !data.url.trim()) {
+        msg.textContent = "❌ O campo 'URL da notícia' é obrigatório.";
+        msg.className = "text-red-400 text-center mt-4";
+        return;
+      }
+      try {
+        new URL(data.url);
+      } catch {
+        msg.textContent = "❌ A URL informada é inválida.";
+        msg.className = "text-red-400 text-center mt-4";
+        return;
+      }
+
+      try {
+        const resp = await fetch('http://localhost:5000/api/add-case', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data)
+        });
+
+        const result = await resp.json();
+
+        if (result.success) {
+          msg.textContent = "✅ Caso adicionado com sucesso!";
+          msg.className = "text-green-400 text-center mt-4";
+          form.reset();
+
+          // 🔄 Aguarda 2 segundos e redireciona de volta para o mapa
+          setTimeout(() => {
+            window.location.href = "index.html?refresh=1";
+          }, 2000);
+        } else {
+          msg.textContent = "❌ Erro: " + (result.error || "Falha ao salvar");
+          msg.className = "text-red-400 text-center mt-4";
+        }
+      } catch (err) {
+        msg.textContent = "❌ Erro ao conectar com o servidor";
+        msg.className = "text-red-400 text-center mt-4";
+      }
+    });
+  </script>
+</body>
+</html>
+

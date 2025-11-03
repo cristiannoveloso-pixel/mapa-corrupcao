@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Governadores — Brasil Transparente</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body { background:#0f172a; color:#e6eef8; font-family:Inter,system-ui,-apple-system,'Segoe UI',Roboto,'Helvetica Neue',Arial; }
+    .card { background: linear-gradient(180deg, #0b1220 0%, #0f172a 100%); border:1px solid rgba(255,255,255,0.04); padding:16px; border-radius:12px; }
+    .pill { background: rgba(255,255,255,0.03); padding:6px 10px; border-radius:999px; display:inline-block; font-weight:600; }
+    .avatar { width:120px; height:120px; object-fit:cover; border-radius:8px; background:#1f2937; display:block; }
+    .muted { color:#9ca3af; }
+  </style>
+</head>
+<body class="min-h-screen p-6">
+  <header class="mb-6">
+    <a href="index.html" class="text-sm text-gray-300 hover:text-white">&larr; Voltar</a>
+    <h1 class="text-3xl font-bold text-yellow-400 mt-3">Governadores</h1>
+    <p class="text-sm text-gray-400 mt-1">Lista completa dos governadores (2023–2027). Busque, filtre e veja detalhes.</p>
+  </header>
+
+  <main class="container mx-auto">
+    <div class="mb-6 grid grid-cols-1 md:grid-cols-3 gap-4">
+      <input id="q" placeholder="Pesquisar por nome, partido ou estado..." class="px-4 py-3 rounded bg-gray-800 placeholder-gray-400" />
+      <select id="filterUf" class="px-4 py-3 rounded bg-gray-800">
+        <option value="">Filtrar por UF</option>
+        <option value="AC">AC</option><option value="AL">AL</option><option value="AP">AP</option><option value="AM">AM</option><option value="BA">BA</option>
+        <option value="CE">CE</option><option value="DF">DF</option><option value="ES">ES</option><option value="GO">GO</option><option value="MA">MA</option>
+        <option value="MT">MT</option><option value="MS">MS</option><option value="MG">MG</option><option value="PA">PA</option><option value="PB">PB</option>
+        <option value="PR">PR</option><option value="PE">PE</option><option value="PI">PI</option><option value="RJ">RJ</option><option value="RN">RN</option>
+        <option value="RS">RS</option><option value="RO">RO</option><option value="RR">RR</option><option value="SC">SC</option><option value="SP">SP</option>
+        <option value="SE">SE</option><option value="TO">TO</option>
+      </select>
+
+      <select id="filterPartido" class="px-4 py-3 rounded bg-gray-800">
+        <option value="">Filtrar por partido</option>
+      </select>
+    </div>
+
+    <div id="count" class="text-sm text-gray-300 mb-4">—</div>
+
+    <section id="grid" class="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3"></section>
+
+    <!-- modal perfil -->
+    <div id="modal" class="fixed inset-0 bg-black bg-opacity-60 hidden items-center justify-center z-50">
+      <div class="bg-white text-gray-900 rounded-lg max-w-3xl w-full p-6">
+        <button id="modalClose" class="mb-4 text-sm text-gray-600 hover:text-gray-900">Fechar ✕</button>
+        <div id="modalContent"></div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    // carregar JSON com governadores
+    const DATA_URL = 'politicos_governadores.json'; // ajuste se necessário
+
+    let data = [];
+    async function load(){
+      try{
+        const res = await fetch(DATA_URL, {cache:'no-store'});
+        data = (await res.json()).governadores || [];
+        populatePartidoFilter();
+        render();
+      }catch(e){
+        console.error(e);
+        document.getElementById('grid').innerHTML = '<p class="text-red-400">Erro ao carregar dados. Verifique politicos_governadores.json</p>';
+      }
+    }
+
+    function populatePartidoFilter(){
+      const sel = document.getElementById('filterPartido');
+      const partidos = Array.from(new Set(data.map(d=>d.partido).filter(Boolean))).sort();
+      partidos.forEach(p => {
+        const o = document.createElement('option'); o.value = p; o.textContent = p; sel.appendChild(o);
+      });
+    }
+
+    function formatCard(g){
+      return `
+      <article class="card flex gap-4">
+        <img class="avatar" src="${g.foto || 'https://via.placeholder.com/240x240.png?text=Sem+foto'}" alt="${escapeHtml(g.governador)}"/>
+        <div class="flex-1">
+          <h3 class="text-lg font-semibold">${escapeHtml(g.governador)}</h3>
+          <div class="muted text-sm">${escapeHtml(g.estado)} — <span class="pill">${escapeHtml(g.uf)}</span></div>
+          <p class="mt-2"><strong>Partido:</strong> ${escapeHtml(g.partido)} · <strong>Mandato:</strong> ${escapeHtml(g.mandato)}</p>
+          <p class="mt-2"><strong>Vice-governador:</strong> ${g.vice ? escapeHtml(g.vice) : '<span class="muted">Não informado</span>'}</p>
+          <div class="mt-4">
+            <button data-uf="${g.uf}" class="openProfile px-3 py-2 rounded bg-yellow-400 text-black font-semibold">Ver perfil</button>
+          </div>
+        </div>
+      </article>`;
+    }
+
+    function render(){
+      const q = document.getElementById('q').value.trim().toLowerCase();
+      const uf = document.getElementById('filterUf').value;
+      const partido = document.getElementById('filterPartido').value;
+      let list = data.filter(d=>{
+        if(uf && d.uf !== uf) return false;
+        if(partido && d.partido !== partido) return false;
+        if(!q) return true;
+        return (d.governador && d.governador.toLowerCase().includes(q)) || (d.partido && d.partido.toLowerCase().includes(q)) || (d.estado && d.estado.toLowerCase().includes(q));
+      });
+      document.getElementById('count').textContent = `Exibindo ${list.length} resultado(s).`;
+      const grid = document.getElementById('grid');
+      grid.innerHTML = list.map(formatCard).join('');
+      document.querySelectorAll('.openProfile').forEach(btn=>{
+        btn.addEventListener('click', e => {
+          const uf = e.currentTarget.getAttribute('data-uf');
+          const gov = data.find(x=>x.uf === uf);
+          showModal(gov);
+        });
+      });
+    }
+
+    function showModal(g){
+      const m = document.getElementById('modal');
+      const c = document.getElementById('modalContent');
+      c.innerHTML = `
+        <div class="flex gap-6">
+          <img src="${g.foto || 'https://via.placeholder.com/240x240.png?text=Sem+foto'}" class="w-48 h-48 object-cover rounded"/>
+          <div>
+            <h2 class="text-2xl font-bold">${escapeHtml(g.governador)}</h2>
+            <p class="muted">${escapeHtml(g.estado)} — ${escapeHtml(g.uf)}</p>
+            <p class="mt-3"><strong>Partido:</strong> ${escapeHtml(g.partido)}</p>
+            <p class="mt-2"><strong>Mandato:</strong> ${escapeHtml(g.mandato)}</p>
+            <p class="mt-2"><strong>Vice-governador:</strong> ${g.vice ? escapeHtml(g.vice) : '<span class="muted">Não informado</span>'}</p>
+            <div class="mt-4">${g.bio ? '<p>'+escapeHtml(g.bio)+'</p>' : ''}</div>
+          </div>
+        </div>
+      `;
+      m.classList.remove('hidden');
+      m.style.display = 'flex';
+    }
+
+    document.getElementById('modalClose').addEventListener('click', ()=>{
+      const m = document.getElementById('modal');
+      m.style.display = 'none';
+      m.classList.add('hidden');
+    });
+
+    document.getElementById('q').addEventListener('input', render);
+    document.getElementById('filterUf').addEventListener('change', render);
+    document.getElementById('filterPartido').addEventListener('change', render);
+
+    function escapeHtml(str){ return String(str).replace(/[&<>"']/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":"&#39;"}[m])); }
+
+    // inicializa
+    load();
+  </script>
+</body>
+</html>
