@@ -7,7 +7,7 @@ import { fileURLToPath } from 'url';
 
 const sqlite3 = sqlite3pkg.verbose();
 const app = express();
-const PORT = 5000;
+const PORT = process.env.PORT || 5000;
 
 // Substitui __dirname e __filename em ES Modules
 const __filename = fileURLToPath(import.meta.url);
