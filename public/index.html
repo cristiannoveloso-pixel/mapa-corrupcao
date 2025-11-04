@@ -152,21 +152,36 @@
   <main class="container mx-auto px-4 py-6 flex flex-col lg:flex-row gap-6">
     <section class="flex-1 bg-slate-900 p-4 rounded-lg shadow-lg">
       <div class="flex flex-wrap items-center justify-between gap-3 mb-3">
+  <!-- Linha superior com total, pesquisa e botão -->
+<div class="flex flex-wrap items-center justify-between gap-3 mb-3 w-full">
+  <!-- Total de casos -->
   <div id="total-casos" class="total-casos flex items-center">
     🧾 Total de casos: <strong style="margin-left:6px;">0</strong>
   </div>
 
+  <!-- Pesquisa + Botão -->
   <div class="flex items-center gap-2 flex-1 justify-end">
-    <input type="text" id="searchInput"
-      placeholder="Pesquisar por estado, cidade ou ano..."
-      class="flex-1 min-w-[220px] max-w-md bg-slate-800 border border-slate-600 text-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-yellow-400" />
+    <div class="relative flex-1 max-w-md">
+      <span class="absolute inset-y-0 left-3 flex items-center text-gray-400">
+        <i class="fa-solid fa-magnifying-glass"></i>
+      </span>
+      <input
+        type="text"
+        id="searchInput"
+        placeholder="Pesquisar por estado, cidade ou ano..."
+        class="w-full bg-slate-800 border border-slate-600 text-gray-200 rounded-lg pl-9 pr-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-yellow-400"
+      />
+    </div>
 
-    <button id="recenter"
-      class="bg-slate-800 border border-yellow-500 text-yellow-400 px-3 py-2 rounded-md hover:bg-slate-700 transition">
+    <button
+      id="recenter"
+      class="recenter-btn bg-slate-800 border border-yellow-500 text-yellow-400 px-3 py-2 rounded-md hover:bg-slate-700 transition flex items-center gap-1"
+    >
       🔄 Recentrar mapa
     </button>
   </div>
 </div>
+
 
     <div id="map" class="w-full h-[650px] rounded-lg shadow-lg"></div>
     <div id="cases-container" class="mt-4 text-sm text-gray-300"></div>
