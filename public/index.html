@@ -221,6 +221,15 @@
     let map = null;
     let geoLayer = null;
 
+    // ---------- Auxiliar de cores ----------
+function getColor(qtd) {
+  if (qtd === 0) return '#1e40af';        // Azul escuro (nenhum caso)
+  if (qtd <= 2) return '#2563eb';         // Azul médio
+  if (qtd <= 4) return '#facc15';         // Amarelo (médio)
+  return '#dc2626';                       // Vermelho (muitos casos)
+}
+
+
   async function initMapAndData() {
   const mapEl = document.getElementById('map');
   const boundsBrasil = L.latLngBounds(L.latLng(-34.0, -74.0), L.latLng(6.0, -32.0));
