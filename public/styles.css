@@ -484,3 +484,97 @@ nav, .submenu {
   margin: 0 0 4px 0;
   font-size: 14px;
 }
+/* ====================== MODAL ADMIN ====================== */
+#adminModal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  align-items: center;
+  justify-content: center;
+}
+
+#adminModal.show {
+  display: flex;
+}
+
+#adminModal .absolute {
+  background-color: rgba(0, 0, 0, 0.5);
+  inset: 0;
+  position: absolute;
+}
+
+#adminModal .relative {
+  background-color: white;
+  border-radius: 0.5rem; /* rounded-lg */
+  box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1),0 4px 6px -4px rgba(0,0,0,0.1);
+  width: 100%;
+  max-width: 24rem; /* 384px */
+  margin: 0 1rem; /* mx-4 */
+  padding: 1.5rem; /* p-6 */
+  position: relative;
+  z-index: 10;
+}
+
+#adminModal h3 {
+  font-size: 1.125rem; /* text-lg */
+  font-weight: 600;
+  margin-bottom: 0.75rem; /* mb-3 */
+}
+
+#adminModal p {
+  font-size: 0.875rem; /* text-sm */
+  color: #4b5563; /* gray-600 */
+  margin-bottom: 1rem;
+}
+
+#adminModal input[type="password"] {
+  width: 100%;
+  border: 1px solid #d1d5db; /* border-gray-300 */
+  border-radius: 0.375rem; /* rounded */
+  padding: 0.5rem 0.75rem; /* px-3 py-2 */
+}
+
+#adminModal #adminError {
+  color: #dc2626; /* red-600 */
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
+  display: none;
+}
+
+#adminModal .shake {
+  animation: shake 0.3s ease;
+}
+
+@keyframes shake {
+  0% { transform: translateX(0); }
+  25% { transform: translateX(-6px); }
+  50% { transform: translateX(6px); }
+  75% { transform: translateX(-4px); }
+  100% { transform: translateX(0); }
+}
+
+#adminModal .flex {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem; /* gap-2 */
+  margin-top: 0.5rem; /* mt-2 */
+}
+
+#adminModal button {
+  border-radius: 0.375rem; /* rounded */
+  padding: 0.5rem 1rem; /* px-4 py-2 */
+  font-weight: 500;
+}
+
+#adminModal button#adminCancel {
+  background-color: #f3f4f6; /* bg-gray-100 */
+  border: 1px solid #d1d5db; /* border */
+}
+
+#adminModal button#adminSubmit {
+  background-color: #facc15; /* bg-yellow-500 */
+  color: white;
+  font-weight: 600;
+  border: none;
+}
