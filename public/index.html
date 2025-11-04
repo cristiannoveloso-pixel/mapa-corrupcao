@@ -238,7 +238,7 @@
       // fetch casos
       try{
         fetch('/api/cases')
-        casosData = await resp.json();
+         const data = await response.json();
       }catch(e){
         console.warn('Erro ao carregar casos:', e);
         casosData = [];
