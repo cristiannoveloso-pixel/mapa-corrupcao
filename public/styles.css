@@ -616,4 +616,24 @@ nav, .submenu {
   opacity: 1;
   transform: scale(1);
 }
+main {
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  gap: 1.5rem;
+}
+
+@media (max-width: 1024px) {
+  main {
+    grid-template-columns: 1fr;
+  }
+}
+
+aside ul li {
+  line-height: 1.4;
+}
+
+aside h3 {
+  border-bottom: 1px solid #1e293b;
+  padding-bottom: 4px;
+}
 
