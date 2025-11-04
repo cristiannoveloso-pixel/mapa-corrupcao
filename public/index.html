@@ -151,10 +151,23 @@
   <!-- MAIN -->
   <main class="container mx-auto px-4 py-6 flex flex-col lg:flex-row gap-6">
     <section class="flex-1 bg-slate-900 p-4 rounded-lg shadow-lg">
-      <div id="total-casos" class="total-casos mb-3"></div>
-  <input type="text" id="searchInput" placeholder="Pesquisar por estado, cidade ou ano..." class="flex-1 min-w-[200px] max-w-lg bg-slate-800 border border-slate-600 text-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-yellow-400" />
-  <button id="recenter" class="recenter-btn">🔄 Recentrar mapa</button>
+      <div class="flex flex-wrap items-center justify-between gap-3 mb-3">
+  <div id="total-casos" class="total-casos flex items-center">
+    🧾 Total de casos: <strong style="margin-left:6px;">0</strong>
+  </div>
+
+  <div class="flex items-center gap-2 flex-1 justify-end">
+    <input type="text" id="searchInput"
+      placeholder="Pesquisar por estado, cidade ou ano..."
+      class="flex-1 min-w-[220px] max-w-md bg-slate-800 border border-slate-600 text-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-yellow-400" />
+
+    <button id="recenter"
+      class="bg-slate-800 border border-yellow-500 text-yellow-400 px-3 py-2 rounded-md hover:bg-slate-700 transition">
+      🔄 Recentrar mapa
+    </button>
+  </div>
 </div>
+
     <div id="map" class="w-full h-[650px] rounded-lg shadow-lg"></div>
     <div id="cases-container" class="mt-4 text-sm text-gray-300"></div>
   </section>
