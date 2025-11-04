@@ -150,83 +150,91 @@
   </header>
 
   <!-- MAIN -->
-  <main class="container mx-auto px-4 py-6 flex flex-col lg:flex-row gap-6">
-    <section class="flex-1 bg-slate-900 p-4 rounded-lg shadow-lg">
-      <!-- LINHA SUPERIOR: TOTAL, PESQUISA E BOTÃO (RESPONSIVO) -->
-      <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mb-4">
-        <div id="total-casos" class="total-casos flex items-center justify-center md:justify-start">
-          🧾 Total de casos: <strong style="margin-left:6px;">0</strong>
-        </div>
-
-        <div class="flex items-center justify-center md:justify-end gap-2 w-full md:w-auto">
-          <div class="relative w-full md:w-72">
-            <span class="absolute inset-y-0 left-3 flex items-center text-gray-400">
-              <i class="fa-solid fa-magnifying-glass"></i>
-            </span>
-            <input
-              type="text"
-              id="searchInput"
-              placeholder="Pesquisar por estado, cidade ou ano..."
-              class="w-full bg-slate-800 border border-slate-600 text-gray-200 rounded-lg pl-9 pr-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-yellow-400"
-            />
-          </div>
-          <button
-            id="recenter"
-            class="recenter-btn bg-slate-800 border border-yellow-500 text-yellow-400 px-3 py-2 rounded-md hover:bg-slate-700 transition flex items-center gap-1 text-sm font-medium"
-          >
-            🔄 Recentrar mapa
-          </button>
-        </div>
+  <main class="container mx-auto px-4 py-6 grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-6">
+  <!-- COLUNA PRINCIPAL -->
+  <section class="bg-slate-900 p-4 rounded-lg shadow-lg flex flex-col">
+    <!-- TOPO (Total / Pesquisa / Botão) -->
+    <div class="flex flex-wrap items-center justify-between gap-3 mb-3">
+      <div id="total-casos" class="flex items-center text-yellow-400 font-semibold text-lg bg-slate-800 px-4 py-2 rounded-lg border border-slate-700 shadow">
+        🧾 Total de casos: <strong class="ml-2 text-yellow-300">0</strong>
       </div>
 
-      <!-- MAPA -->
-      <div id="map" class="w-full h-[650px] rounded-lg shadow-lg"></div>
-
-      <!-- CASOS -->
-      <div id="cases-container" class="mt-4 text-sm text-gray-300"></div>
-    </section>
-
-    <aside class="sidebar w-full lg:w-[24%]">
-       <!-- CASOS NACIONAIS -->
-      <div id="national-cases" class="mb-4">
-    <h3>Casos Nacionais</h3>
-    <div id="national-cases-list" class="text-sm text-gray-300">
-      <p>Carregando casos nacionais...</p>
+      <div class="flex items-center gap-2 flex-1 justify-end">
+        <div class="relative flex-1 max-w-md">
+          <span class="absolute inset-y-0 left-3 flex items-center text-gray-400">
+            <i class="fa-solid fa-magnifying-glass"></i>
+          </span>
+          <input
+            type="text"
+            id="searchInput"
+            placeholder="Pesquisar por estado, cidade ou ano..."
+            class="w-full bg-slate-800 border border-slate-600 text-gray-200 rounded-lg pl-9 pr-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-yellow-400"
+          />
+        </div>
+        <button
+          id="recenter"
+          class="bg-yellow-500 hover:bg-yellow-400 text-slate-900 font-semibold px-4 py-2 rounded-md shadow transition flex items-center gap-1"
+        >
+          🔄 Recentrar mapa
+        </button>
+      </div>
     </div>
-  </div>
-      <h3>Mais Lidos</h3>
-      <ul>
-        <li><a href="#">1. Como identificar sinais de corrupção em órgãos públicos.</a></li>
-        <li><a href="#">2. Os 10 maiores escândalos de corrupção da história do Brasil.</a></li>
-        <li><a href="#">3. Guia completo sobre a Lei Anticorrupção (Lei nº 12.846/2013).</a></li>
-        <li><a href="#">4. O impacto da corrupção na economia brasileira: um estudo de caso.</a></li>
-        <li><a href="#">5. Denúncias anônimas: como proteger-se e combater o crime.</a></li>
-      </ul>
 
-      <h3>Leis e Legislação</h3>
-      <ul>
-        <li><a href="#">Lei de Improbidade Administrativa (Lei 8.429/92)</a></li>
-        <li><a href="#">Lei nº 12.846/2013 (Lei Anticorrupção)</a></li>
-        <li><a href="#">Código Penal - Crimes Contra a Administração Pública</a></li>
-        <li><a href="#">Lei de Acesso à Informação (Lei 12.527/11)</a></li>
-      </ul>
+    <!-- MAPA -->
+    <div id="map" class="w-full h-[650px] rounded-lg shadow-lg border border-slate-700"></div>
 
-      <h3>Órgãos de Combate</h3>
-      <ul>
-        <li><a href="https://www.mpf.mp.br/" target="_blank">Ministério Público Federal (MPF)</a></li>
-        <li><a href="https://www.pf.gov.br/" target="_blank">Polícia Federal (PF)</a></li>
-        <li><a href="https://www.cgu.gov.br/" target="_blank">Controladoria-Geral da União (CGU)</a></li>
-        <li><a href="https://www.tcu.gov.br/" target="_blank">Tribunal de Contas da União (TCU)</a></li>
-        <li><a href="https://www.stf.jus.br/" target="_blank">Supremo Tribunal Federal (STF)</a></li>
-      </ul>
+    <!-- CASOS -->
+    <div id="cases-container" class="mt-4 text-sm text-gray-300"></div>
+  </section>
 
-      <div class="alert-box">
-        <p><strong>Denuncie a Corrupção!</strong></p>
-        <p class="descricao">Sua voz faz a diferença. Contribua para um Brasil mais justo.</p>
-        <a href="https://www.mpf.mp.br/mpfservicos/denuncia">Faça sua Denúncia Aqui</a>
+  <!-- SIDEBAR -->
+  <aside class="bg-slate-900 p-4 rounded-lg shadow-lg space-y-4">
+    <div id="national-cases">
+      <h3 class="text-yellow-400 font-semibold mb-2">Casos Nacionais</h3>
+      <div id="national-cases-list" class="text-sm text-gray-300">
+        <p>Carregando casos nacionais...</p>
       </div>
-    </aside>
-  </main>
+    </div>
+
+    <div>
+      <h3 class="text-yellow-400 font-semibold mb-2">Mais Lidos</h3>
+      <ul class="text-sm space-y-1 text-gray-300">
+        <li>1. Como identificar sinais de corrupção em órgãos públicos.</li>
+        <li>2. Os 10 maiores escândalos de corrupção da história do Brasil.</li>
+        <li>3. Guia completo sobre a Lei Anticorrupção (Lei nº 12.846/2013).</li>
+        <li>4. O impacto da corrupção na economia brasileira: um estudo de caso.</li>
+        <li>5. Denúncias anônimas: como proteger-se e combater o crime.</li>
+      </ul>
+    </div>
+
+    <div>
+      <h3 class="text-yellow-400 font-semibold mb-2">Leis e Legislação</h3>
+      <ul class="text-sm text-gray-300 space-y-1">
+        <li>Lei de Improbidade Administrativa (Lei 8.429/92)</li>
+        <li>Lei nº 12.846/2013 (Lei Anticorrupção)</li>
+        <li>Código Penal - Crimes Contra a Administração Pública</li>
+        <li>Lei de Acesso à Informação (Lei 12.527/11)</li>
+      </ul>
+    </div>
+
+    <div>
+      <h3 class="text-yellow-400 font-semibold mb-2">Órgãos de Combate</h3>
+      <ul class="text-sm text-gray-300 space-y-1">
+        <li>Ministério Público Federal (MPF)</li>
+        <li>Polícia Federal (PF)</li>
+        <li>Controladoria-Geral da União (CGU)</li>
+        <li>Tribunal de Contas da União (TCU)</li>
+        <li>Supremo Tribunal Federal (STF)</li>
+      </ul>
+    </div>
+
+    <div class="bg-red-600 text-center rounded-lg p-3 text-white font-semibold shadow-md">
+      <p>🚨 Denuncie a Corrupção!</p>
+      <p class="text-sm font-normal mt-1">Sua voz faz a diferença. Contribua para um Brasil mais justo.</p>
+      <a href="https://www.mpf.mp.br/mpfservicos/denuncia" target="_blank" class="inline-block mt-2 bg-white text-red-700 px-3 py-1 rounded font-bold">FAÇA SUA DENÚNCIA</a>
+    </div>
+  </aside>
+</main>
 
   <footer class="footer">
     <div class="footer-container">
