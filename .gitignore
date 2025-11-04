@@ -1,1 +1,30 @@
+# Dependências
+node_modules/
+
+# Arquivos de ambiente (nunca subir para o GitHub)
 .env
+.env.local
+.env.*.local
+
+# Banco de dados local (SQLite)
+corruption.db
+*.sqlite
+*.sqlite3
+
+# Logs
+logs/
+*.log
+
+# Build / Cache
+dist/
+build/
+.cache/
+.tmp/
+
+# Configs de editores
+.vscode/
+.idea/
+
+# Arquivos temporários / do sistema
+.DS_Store
+Thumbs.db
