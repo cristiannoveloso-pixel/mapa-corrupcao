@@ -23,7 +23,7 @@ async function fetchFromPortal(pagina = 1) {
 
   try {
     const { data } = await axios.get(url, {
-      headers: { "chave-api-dados": CHAVE }
+      headers: { "chave-api": CHAVE }
     });
     return data;
   } catch (err) {
@@ -34,15 +34,12 @@ async function fetchFromPortal(pagina = 1) {
 
 async function atualizarBanco() {
   const db = await connectDb();
-  await db.run(`CREATE TABLE IF NOT EXISTS news (
+  await db.run(`CREATE TABLE IF NOT EXISTS cases (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     title TEXT,
     summary TEXT,
     state TEXT,
-    region TEXT,
-    municipality TEXT,
     organization TEXT,
-    value_estimated TEXT,
     status TEXT,
     date TEXT,
     source TEXT,
@@ -50,11 +47,12 @@ async function atualizarBanco() {
   )`);
 
   let totalInseridos = 0;
+  let pagina = 1;
 
-  // Vamos buscar as 3 primeiras páginas (ajustável)
-  for (let i = 1; i <= 3; i++) {
-    const registros = await fetchFromPortal(i);
+  while (true) {
+    const registros = await fetchFromPortal(pagina);
     if (!registros.length) break;
+    console.log(`📄 Página ${pagina}: ${registros.length} registros.`);
 
     for (const r of registros) {
       const titulo = r.nome || r.razaoSocial || "Registro Público";
@@ -65,7 +63,7 @@ async function atualizarBanco() {
       const url = r.link || `https://portaldatransparencia.gov.br/pessoa-juridica/${r.cpfCnpj}`;
 
       await db.run(
-        `INSERT OR IGNORE INTO news
+        `INSERT OR IGNORE INTO cases
         (title, summary, state, organization, status, date, source, url)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
         [titulo, resumo, estado, orgao, "Sancionado", data, "Portal da Transparência", url]
@@ -73,6 +71,9 @@ async function atualizarBanco() {
 
       totalInseridos++;
     }
+
+    pagina++;
+    await new Promise(r => setTimeout(r, 1000)); // evita bloqueio
   }
 
   console.log(`✅ ${totalInseridos} novos casos oficiais inseridos no banco.`);
@@ -80,3 +81,4 @@ async function atualizarBanco() {
 }
 
 atualizarBanco().then(() => console.log("🏁 Coleta CGU concluída."));
+
