@@ -23,7 +23,8 @@ async function fetchFromPortal(pagina = 1) {
 
   try {
     const { data } = await axios.get(url, {
-      headers: { "chave-api-dados": CHAVE }
+      headers: { "chave-api-dados": CHAVE },
+      timeout: 15000
     });
     return data;
   } catch (err) {
@@ -39,7 +40,9 @@ async function atualizarBanco() {
     title TEXT,
     summary TEXT,
     state TEXT,
+    municipality TEXT,
     organization TEXT,
+    value_estimated TEXT,
     status TEXT,
     date TEXT,
     source TEXT,
@@ -58,22 +61,35 @@ async function atualizarBanco() {
       const titulo = r.nome || r.razaoSocial || "Registro Público";
       const resumo = r.motivo || r.descricao || "Sanção registrada no Portal da Transparência";
       const estado = r.uf || "Brasil";
+      const municipio = r.nomeMunicipio || null;
       const orgao = r.orgaoSancionador?.nome || "Órgão não informado";
+      const valor = r.valorMulta ? `R$ ${Number(r.valorMulta).toLocaleString("pt-BR", { minimumFractionDigits: 2 })}` : null;
       const data = r.dataPublicacao || r.dataInicioSancao || new Date().toISOString();
       const url = r.link || `https://portaldatransparencia.gov.br/pessoa-juridica/${r.cpfCnpj}`;
 
       await db.run(
         `INSERT OR IGNORE INTO news
-        (title, summary, state, organization, status, date, source, url)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-        [titulo, resumo, estado, orgao, "Sancionado", data, "Portal da Transparência", url]
+        (title, summary, state, municipality, organization, value_estimated, status, date, source, url)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        [
+          titulo,
+          resumo,
+          estado,
+          municipio,
+          orgao,
+          valor,
+          "Sancionado",
+          data,
+          "Portal da Transparência",
+          url
+        ]
       );
 
       totalInseridos++;
     }
 
     pagina++;
-    await new Promise(r => setTimeout(r, 1000)); // evita bloqueio
+    await new Promise(r => setTimeout(r, 1000)); // pausa 1s para evitar bloqueio
   }
 
   console.log(`✅ ${totalInseridos} novos casos oficiais inseridos no banco.`);
@@ -81,4 +97,5 @@ async function atualizarBanco() {
 }
 
 atualizarBanco().then(() => console.log("🏁 Coleta CGU concluída."));
+
 
