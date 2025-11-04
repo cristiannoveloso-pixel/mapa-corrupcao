@@ -521,127 +521,27 @@ legend.addTo(map);
       painel.querySelector('.fechar-btn').addEventListener('click', () => painel.classList.remove('aberto'));
       return painel;
     }
-  </script>
-  <!-- Modal de senha (cole antes de </body>) -->
+ <!-- Modal de senha (cole antes de </body>) -->
 <div id="adminModal" aria-hidden="true" class="fixed inset-0 z-50 hidden items-center justify-center">
-  <div class="absolute inset-0 bg-black/50"></div>
-  <div class="relative bg-white rounded-lg shadow-lg w-full max-w-md mx-4 p-6 z-10">
-    <h3 class="text-lg font-semibold mb-3">🔑 Acesso administrativo</h3>
-    <p class="text-sm text-gray-600 mb-4">Digite a senha para acessar o cadastro.</p>
+  <div class="absolute inset-0"></div>
+  <div class="relative">
+    <h3>🔑 Acesso administrativo</h3>
+    <p>Digite a senha para acessar o cadastro.</p>
 
     <form id="adminForm" onsubmit="return false;" class="space-y-3">
       <div>
         <label for="adminPassword" class="sr-only">Senha</label>
-        <input id="adminPassword" type="password" autocomplete="current-password"
-               class="w-full border rounded px-3 py-2" placeholder="Senha" />
+        <input id="adminPassword" type="password" autocomplete="current-password" placeholder="Senha" />
       </div>
 
-      <div id="adminError" class="text-sm text-red-600 hidden">Senha incorreta. Tente novamente.</div>
+      <div id="adminError">Senha incorreta. Tente novamente.</div>
 
       <div class="flex justify-end gap-2 mt-2">
-        <button id="adminCancel" type="button"
-                class="px-4 py-2 rounded border bg-gray-100">Cancelar</button>
-        <button id="adminSubmit" type="button"
-                class="px-4 py-2 rounded bg-yellow-500 text-white font-semibold">Entrar</button>
+        <button id="adminCancel" type="button">Cancelar</button>
+        <button id="adminSubmit" type="button">Entrar</button>
       </div>
     </form>
   </div>
 </div>
-
-<!-- Estilos simples do modal (pode colar no seu styles.css em vez daqui) -->
-<style>
-  /* container já definido inline com classes tailwind; regras extras: */
-  #adminModal { display: none; }
-  #adminModal.show { display: flex; }
-  #adminModal .shake {
-    animation: shake 300ms ease;
-  }
-  @keyframes shake {
-    0% { transform: translateX(0); }
-    25% { transform: translateX(-6px); }
-    50% { transform: translateX(6px); }
-    75% { transform: translateX(-4px); }
-    100% { transform: translateX(0); }
-  }
-</style>
-
-<!-- Script para abrir modal com campo password e interceptar clique no botão "admin" -->
-<script>
-  (function(){
-    const ADMIN_PASSWORD = '12345'; // <- altere aqui se quiser outra senha
-    const ADMIN_REDIRECT = 'add-case.html'; // <- alterar se necessário
-
-    // elementos do modal
-    const modal = document.getElementById('adminModal');
-    const input = document.getElementById('adminPassword');
-    const btnSubmit = document.getElementById('adminSubmit');
-    const btnCancel = document.getElementById('adminCancel');
-    const errBox = document.getElementById('adminError');
-
-    // Helper: mostrar / esconder modal
-    function showModal() {
-      errBox.classList.add('hidden');
-      input.value = '';
-      modal.classList.add('show');
-      modal.setAttribute('aria-hidden', 'false');
-      // focus no campo (com pequeno timeout para garantir visibilidade)
-      setTimeout(() => input.focus(), 50);
-      // bloquear scroll de fundo (simples)
-      document.documentElement.style.overflow = 'hidden';
-    }
-    function hideModal() {
-      modal.classList.remove('show');
-      modal.setAttribute('aria-hidden', 'true');
-      document.documentElement.style.overflow = '';
-    }
-
-    // Checa senha
-    function checkPassword() {
-      const v = input.value ?? '';
-      if (v === ADMIN_PASSWORD) {
-        hideModal();
-        // redireciona
-        window.location.href = ADMIN_REDIRECT;
-        return;
-      }
-      // erro: indicar e 'sacudir' campo
-      errBox.classList.remove('hidden');
-      input.classList.add('shake');
-      setTimeout(() => input.classList.remove('shake'), 350);
-      input.focus();
-      input.select();
-    }
-
-    // Intercepta o clique do botão admin antes do listener original (capturing)
-    const btnAdmin = document.getElementById('btnAddCase');
-    if (btnAdmin) {
-      btnAdmin.addEventListener('click', function(e) {
-        // Intercepta sempre: previne que o prompt antigo seja executado
-        e.preventDefault();
-        e.stopImmediatePropagation?.(); // se disponível
-        showModal();
-      }, true); // <--- use capture para interceptar listeners registrados depois
-    }
-
-    // Submeter com botão
-    btnSubmit?.addEventListener('click', checkPassword);
-    // Cancelar
-    btnCancel?.addEventListener('click', hideModal);
-
-    // Teclas: Enter submete, Esc fecha
-    modal?.addEventListener('keydown', function(evt){
-      if (evt.key === 'Enter') { evt.preventDefault(); checkPassword(); }
-      if (evt.key === 'Escape') { evt.preventDefault(); hideModal(); }
-    });
-
-    // Fechar clicando fora da caixa (click no backdrop)
-    modal?.addEventListener('click', function(evt){
-      if (evt.target === modal) hideModal();
-    });
-
-    // Opcional: caso prefira limpar event listeners antigos que ainda chamam prompt,
-    // você pode procurar e remover—mas como não sabemos onde foi ligado, usar capture é mais seguro.
-  })();
-</script>
 </body>
 </html>
