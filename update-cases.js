@@ -34,7 +34,7 @@ async function fetchFromPortal(pagina = 1) {
 
 async function atualizarBanco() {
   const db = await connectDb();
-  await db.run(`CREATE TABLE IF NOT EXISTS cases (
+  await db.run(`CREATE TABLE IF NOT EXISTS news (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     title TEXT,
     summary TEXT,
@@ -63,7 +63,7 @@ async function atualizarBanco() {
       const url = r.link || `https://portaldatransparencia.gov.br/pessoa-juridica/${r.cpfCnpj}`;
 
       await db.run(
-        `INSERT OR IGNORE INTO cases
+        `INSERT OR IGNORE INTO news
         (title, summary, state, organization, status, date, source, url)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
         [titulo, resumo, estado, orgao, "Sancionado", data, "Portal da Transparência", url]
