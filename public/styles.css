@@ -587,11 +587,6 @@ nav, .submenu {
   font-weight: 600;
   transition: all 0.2s ease;
 }
-.recenter-btn:hover {
-  background-color: #334155;
-  color: #fde68a;
-  transform: translateY(-1px);
-}
 .recenter-btn {
   background-color: #1e293b;
   border: 1px solid #facc15;
