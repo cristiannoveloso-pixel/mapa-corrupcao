@@ -221,50 +221,53 @@
     let map = null;
     let geoLayer = null;
 
-    // ---------- Auxiliar de cores ----------
+  // ---------- FUNÇÃO DE COR ----------
 function getColor(qtd) {
-  if (qtd === 0) return '#1e40af';        // Azul escuro (nenhum caso)
-  if (qtd <= 2) return '#2563eb';         // Azul médio
-  if (qtd <= 4) return '#facc15';         // Amarelo (médio)
-  return '#dc2626';                       // Vermelho (muitos casos)
+  if (qtd === 0) return '#1e40af';
+  if (qtd <= 2) return '#2563eb';
+  if (qtd <= 4) return '#facc15';
+  return '#dc2626';
 }
 
-
-  async function initMapAndData() {
+// ---------- INICIALIZA MAPA + DADOS ----------
+async function initMapAndData() {
   const mapEl = document.getElementById('map');
   const boundsBrasil = L.latLngBounds(L.latLng(-34.0, -74.0), L.latLng(6.0, -32.0));
 
+  // Cria o mapa
   map = L.map('map', { zoomControl: true, attributionControl: false, minZoom: 3, maxZoom: 7 })
           .setView([-14.2, -51.9], 4);
 
-  // Fundo simples
   L.rectangle(boundsBrasil, { color: '#0f172a', fillColor: '#0f172a', fillOpacity: 1, weight: 0 }).addTo(map);
 
-  // Botão de recentralizar
   document.getElementById('recenter')?.addEventListener('click', () => map.fitBounds(boundsBrasil));
 
-  // ---------- CARREGAR CASOS DO BACKEND ----------
- try {
-  const response = await fetch('/api/cases');
-  const data = await response.json();
-  casosData = data;
-} catch (e) {
-  console.warn('Erro ao carregar casos:', e);
-  casosData = [];
-}
-
-  // ---------- ATUALIZAR CONTADOR ----------
-  const contadorEl = document.querySelector('#total-casos strong') || document.getElementById('total-casos');
-  if (contadorEl) {
-    const total = casosData.length;
-    if (contadorEl.tagName === 'STRONG') contadorEl.textContent = total;
-    else contadorEl.innerHTML = `🧾 Total de casos de corrupção registrados no Brasil: <strong>${total}</strong>`;
+  // 1️⃣ Buscar casos
+  try {
+    const response = await fetch('/api/cases');
+    casosData = await response.json();
+    console.log("✅ Casos carregados:", casosData.length);
+  } catch (e) {
+    console.error('Erro ao carregar casos:', e);
+    casosData = [];
   }
 
-  // Normaliza nomes de estados
-  casosData = casosData.map(c => ({ ...c, state_normal: normaliza(c.state) }));
+  // 2️⃣ Atualizar contador
+  const contadorEl = document.querySelector('#total-casos strong') || document.getElementById('total-casos');
+  if (contadorEl) contadorEl.innerHTML = `🧾 Total de casos: <strong>${casosData.length}</strong>`;
 
-  // ---------- CARREGAR MAPA GEOJSON ----------
+  // 3️⃣ Converter siglas para nomes completos
+  const SIGLAS = {
+    AC:"Acre", AL:"Alagoas", AP:"Amapá", AM:"Amazonas", BA:"Bahia", CE:"Ceará",
+    DF:"Distrito Federal", ES:"Espírito Santo", GO:"Goiás", MA:"Maranhão",
+    MT:"Mato Grosso", MS:"Mato Grosso do Sul", MG:"Minas Gerais", PA:"Pará",
+    PB:"Paraíba", PR:"Paraná", PE:"Pernambuco", PI:"Piauí", RJ:"Rio de Janeiro",
+    RN:"Rio Grande do Norte", RS:"Rio Grande do Sul", RO:"Rondônia", RR:"Roraima",
+    SC:"Santa Catarina", SP:"São Paulo", SE:"Sergipe", TO:"Tocantins"
+  };
+  casosData = casosData.map(c => ({ ...c, state_normal: normaliza(SIGLAS[c.state] || c.state) }));
+
+  // 4️⃣ Carregar GeoJSON
   try {
     const r = await fetch('https://raw.githubusercontent.com/codeforamerica/click_that_hood/master/public/data/brazil-states.geojson');
     const geo = await r.json();
@@ -273,47 +276,24 @@ function getColor(qtd) {
       style: f => {
         const nome = normaliza(f.properties.name);
         const qtd = casosData.filter(c => c.state_normal === nome).length;
-        return { color: '#facc15', weight: 1.2, fillColor: getColor(qtd), fillOpacity: 0.8 };
+        return { color: '#facc15', weight: 1, fillColor: getColor(qtd), fillOpacity: 0.8 };
       },
       onEachFeature: (f, layer) => {
         const nome = f.properties.name;
         const qtd = casosData.filter(c => c.state_normal === normaliza(nome)).length;
         layer.bindTooltip(`${nome} — ${qtd} caso${qtd !== 1 ? 's' : ''}`, { direction: 'top', className: 'tooltip-estado' });
         layer.on('click', () => exibirCasos(casosData.filter(c => c.state_normal === normaliza(nome)), nome));
-        layer.on('mouseover', () => layer.setStyle({ fillOpacity: 1 }));
-        layer.on('mouseout', () => layer.setStyle({ fillOpacity: 0.8 }));
       }
     }).addTo(map);
 
-    // ---------- ADICIONAR MARCADORES ----------
-    for (const caso of casosData) {
-      if (!caso.municipality) continue;
-      try {
-        const geoRes = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${caso.municipality}, ${caso.state}, Brasil`);
-        const loc = await geoRes.json();
-        if (loc.length > 0) {
-          const { lat, lon } = loc[0];
-          const marker = L.marker([lat, lon]).addTo(map);
-          marker.bindPopup(`
-            <strong>${caso.title}</strong><br>
-            <em>${caso.municipality} - ${caso.state}</em><br>
-            ${caso.summary || ''}
-          `);
-        }
-      } catch (err) {
-        console.error("Erro ao geocodificar:", err);
-      }
-    }
-
     map.fitBounds(boundsBrasil);
+    console.log("🗺️ GeoJSON carregado com sucesso");
   } catch (err) {
-    console.error('Erro GeoJSON:', err);
+    console.error('❌ Erro GeoJSON:', err);
   }
 
-  // Exibe o mapa suavemente
   mapEl.classList.add('loaded');
 }
-
 
     function exibirCasos(casos, nome){
       const div = document.getElementById('cases-container');
