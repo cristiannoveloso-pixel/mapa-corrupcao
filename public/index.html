@@ -235,14 +235,14 @@
   document.getElementById('recenter')?.addEventListener('click', () => map.fitBounds(boundsBrasil));
 
   // ---------- CARREGAR CASOS DO BACKEND ----------
-  try {
-    const response = await fetch('/api/cases');
-    casosData = await response.json();
-    console.log("✅ Casos carregados:", casosData.length);
-  } catch (e) {
-    console.warn('Erro ao carregar casos:', e);
-    casosData = [];
-  }
+ try {
+  const response = await fetch('/api/cases');
+  const data = await response.json();
+  casosData = data;
+} catch (e) {
+  console.warn('Erro ao carregar casos:', e);
+  casosData = [];
+}
 
   // ---------- ATUALIZAR CONTADOR ----------
   const contadorEl = document.querySelector('#total-casos strong') || document.getElementById('total-casos');
