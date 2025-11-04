@@ -160,6 +160,13 @@
   </section>
 
   <aside class="sidebar w-full lg:w-[24%]">
+     <!-- CASOS NACIONAIS -->
+    <div id="national-cases" class="mb-4">
+  <h3>Casos Nacionais</h3>
+  <div id="national-cases-list" class="text-sm text-gray-300">
+    <p>Carregando casos nacionais...</p>
+  </div>
+</div>
     <h3>Mais Lidos</h3>
     <ul>
       <li><a href="#">1. Como identificar sinais de corrupção em órgãos públicos.</a></li>
@@ -206,18 +213,17 @@
       </div>
     </div>
   </footer>
-
-  <!-- SCRIPTS CONSOLIDADOS (sem duplicações) -->
+  <!-- SCRIPTS CONSOLIDADOS -->
   <script>
-    // ---------- UTIL ----------
-    const normaliza = s => s ? s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().trim() : '';
+ // ---------- UTIL ----------
+const normaliza = s => s ? s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().trim() : '';
 
-    // ---------- GLOBALS ----------
-    let casosData = [];
-    let map = null;
-    let geoLayer = null;
+// ---------- GLOBALS ----------
+let casosData = [];
+let map = null;
+let geoLayer = null;
 
-  // ---------- FUNÇÃO DE COR ----------
+// ---------- FUNÇÃO DE COR ----------
 function getColor(qtd) {
   if (qtd === 0) return '#1e40af';
   if (qtd <= 2) return '#2563eb';
@@ -225,12 +231,47 @@ function getColor(qtd) {
   return '#dc2626';
 }
 
+// ---------- EXIBIR CASOS POR ESTADO ----------
+function exibirCasos(casos, nome){
+  const div = document.getElementById('cases-container');
+  div.innerHTML = `<h3 style="color:#facc15;">Casos em ${nome}</h3>`;
+  if(!casos.length) return div.innerHTML += `<p style="color:#94a3b8;">Nenhum caso registrado.</p>`;
+  casos.forEach(c => {
+    const card = document.createElement('div');
+    card.className = 'case-card';
+    card.innerHTML = `
+      <h4>${c.title}</h4>
+      <p><strong>${c.city || c.municipality || '—'}</strong> — ${c.year || c.date || ''}</p>
+      <p>${c.summary || ''}</p>
+      <a href="${c.source || c.url || '#'}" target="_blank" style="color:#60a5fa;">Fonte oficial</a>
+    `;
+    div.appendChild(card);
+  });
+}
+
+// ---------- EXIBIR CASOS NACIONAIS ----------
+function exibirCasosNacionais(casos){
+  const container = document.getElementById('national-cases-list');
+  container.innerHTML = '';
+  if(!casos.length) return container.innerHTML = '<p>Nenhum caso nacional registrado.</p>';
+  casos.forEach(c => {
+    const card = document.createElement('div');
+    card.className = 'case-card';
+    card.innerHTML = `
+      <h4>${c.title}</h4>
+      <p>${c.summary || ''}</p>
+      <p><strong>${c.date || ''}</strong></p>
+      <a href="${c.source || c.url || '#'}" target="_blank" style="color:#60a5fa;">Fonte oficial</a>
+    `;
+    container.appendChild(card);
+  });
+}
+
 // ---------- INICIALIZA MAPA + DADOS ----------
 async function initMapAndData() {
   const mapEl = document.getElementById('map');
   const boundsBrasil = L.latLngBounds(L.latLng(-34.0, -74.0), L.latLng(6.0, -32.0));
 
-  // Cria o mapa
   map = L.map('map', { zoomControl: true, attributionControl: false, minZoom: 3, maxZoom: 7 })
           .setView([-14.2, -51.9], 4);
 
@@ -238,7 +279,7 @@ async function initMapAndData() {
 
   document.getElementById('recenter')?.addEventListener('click', () => map.fitBounds(boundsBrasil));
 
-  // 1️⃣ Buscar casos
+  // Buscar casos da API
   try {
     const response = await fetch('/api/cases');
     casosData = await response.json();
@@ -248,11 +289,11 @@ async function initMapAndData() {
     casosData = [];
   }
 
-  // 2️⃣ Atualizar contador
+  // Atualizar contador
   const contadorEl = document.querySelector('#total-casos strong') || document.getElementById('total-casos');
   if (contadorEl) contadorEl.innerHTML = `🧾 Total de casos: <strong>${casosData.length}</strong>`;
 
-  // 3️⃣ Converter siglas para nomes completos
+  // Converter siglas para nomes completos
   const SIGLAS = {
     AC:"Acre", AL:"Alagoas", AP:"Amapá", AM:"Amazonas", BA:"Bahia", CE:"Ceará",
     DF:"Distrito Federal", ES:"Espírito Santo", GO:"Goiás", MA:"Maranhão",
@@ -261,9 +302,17 @@ async function initMapAndData() {
     RN:"Rio Grande do Norte", RS:"Rio Grande do Sul", RO:"Rondônia", RR:"Roraima",
     SC:"Santa Catarina", SP:"São Paulo", SE:"Sergipe", TO:"Tocantins"
   };
-  casosData = casosData.map(c => ({ ...c, state_normal: normaliza(SIGLAS[c.state] || c.state) }));
+  casosData = casosData.map(c => ({
+    ...c,
+    state_normal: normaliza(SIGLAS[c.state] || c.state),
+    region_normal: normaliza(c.region)
+  }));
 
-  // 4️⃣ Carregar GeoJSON
+  // Exibir casos nacionais na sidebar
+  const casosNacionais = casosData.filter(c => normaliza(c.state) === "nacional");
+  exibirCasosNacionais(casosNacionais);
+
+  // Carregar GeoJSON dos estados
   try {
     const r = await fetch('https://raw.githubusercontent.com/codeforamerica/click_that_hood/master/public/data/brazil-states.geojson');
     const geo = await r.json();
@@ -287,62 +336,35 @@ async function initMapAndData() {
   } catch (err) {
     console.error('❌ Erro GeoJSON:', err);
   }
-  // ---------- LEGENDA ----------
-const legend = L.control({ position: 'bottomright' });
 
-legend.onAdd = function () {
-  const div = L.DomUtil.create('div', 'info legend');
-  const grades = [0, 1, 3, 5];
-  const labels = [];
-
-  div.innerHTML += '<h4 style="margin-bottom:6px;">Casos de Corrupção</h4>';
-
-  for (let i = 0; i < grades.length; i++) {
-    const from = grades[i];
-    const to = grades[i + 1];
-
-    div.innerHTML +=
-      `<i style="background:${getColor(from + 1)}; width:18px; height:18px; display:inline-block; margin-right:5px; border-radius:3px;"></i>` +
-      (to ? `${from}–${to - 1}` : `${from}+`) + '<br>';
-  }
-
-  return div;
-};
-
-legend.addTo(map);
-
-
-  mapEl.classList.add('loaded');
+  // Legenda
+  const legend = L.control({ position: 'bottomright' });
+  legend.onAdd = function () {
+    const div = L.DomUtil.create('div', 'info legend');
+    const grades = [0, 1, 3, 5];
+    div.innerHTML += '<h4 style="margin-bottom:6px;">Casos de Corrupção</h4>';
+    for (let i = 0; i < grades.length; i++) {
+      const from = grades[i];
+      const to = grades[i + 1];
+      div.innerHTML += `<i style="background:${getColor(from + 1)}; width:18px; height:18px; display:inline-block; margin-right:5px; border-radius:3px;"></i>` +
+        (to ? `${from}–${to - 1}` : `${from}+`) + '<br>';
+    }
+    return div;
+  };
+  legend.addTo(map);
 }
 
-    function exibirCasos(casos, nome){
-      const div = document.getElementById('cases-container');
-      div.innerHTML = `<h3 style="color:#facc15;">Casos em ${nome}</h3>`;
-      if(!casos.length) return div.innerHTML += `<p style="color:#94a3b8;">Nenhum caso registrado.</p>`;
-      casos.forEach(c => {
-        const card = document.createElement('div');
-        card.className = 'case-card';
-        card.innerHTML = `
-          <h4>${c.title}</h4>
-          <p><strong>${c.city || c.municipality || '—'}</strong> — ${c.year || c.date || ''}</p>
-          <p>${c.summary || ''}</p>
-          <a href="${c.source || c.url || '#'}" target="_blank" style="color:#60a5fa;">Fonte oficial</a>
-        `;
-        div.appendChild(card);
-      });
-    }
+// ---------- EVENTOS DOM ----------
+document.addEventListener('DOMContentLoaded', () => {
+  initMapAndData();
 
-    // ---------- Interações do menu & filtros ----------
-    document.addEventListener('DOMContentLoaded', () => {
-      initMapAndData();
-
-      // mobile menu
-      const menuButton = document.getElementById('menu-button');
-      menuButton && menuButton.addEventListener('click', () => {
-        const menu = document.getElementById('main-menu');
-        if(menu.classList.contains('hidden')){ menu.classList.remove('hidden'); menu.classList.add('flex'); }
-        else { menu.classList.add('hidden'); menu.classList.remove('flex'); }
-      });
+  // Mobile menu
+  const menuButton = document.getElementById('menu-button');
+  menuButton && menuButton.addEventListener('click', () => {
+    const menu = document.getElementById('main-menu');
+    if(menu.classList.contains('hidden')){ menu.classList.remove('hidden'); menu.classList.add('flex'); }
+    else { menu.classList.add('hidden'); menu.classList.remove('flex'); }
+  });
 
       // submenu toggles (single handler)
       document.querySelectorAll('[data-toggle]').forEach(toggle => {
