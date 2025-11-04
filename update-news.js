@@ -108,8 +108,8 @@ async function atualizarBanco() {
     const fonte = art.source?.name?.trim() || "Notícia Online";
 
     // Detectar estado e região
-    const estadoDetectado = detectarEstado(`${titulo} ${resumo}`) || "Brasil";
-    const regiao = estadosRegioes[estadoDetectado] || "Nacional";
+    const estadoDetectado = detectarEstado(`${titulo} ${resumo}`);
+    const regiao = estadoDetectado ? estadosRegioes[estadoDetectado] : "Nacional";
 
     const municipality = "—";
     const organization = "—";
@@ -121,16 +121,30 @@ async function atualizarBanco() {
         `INSERT OR IGNORE INTO news 
         (title, summary, state, region, municipality, organization, value_estimated, status, date, source, url)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-        [titulo, resumo, estadoDetectado, regiao, municipality, organization, value_estimated, status, data, fonte, url]
+        [
+          titulo,
+          resumo,
+          estadoDetectado || "Nacional",
+          regiao,
+          municipality,
+          organization,
+          value_estimated,
+          status,
+          data,
+          fonte,
+          url
+        ]
       );
     } catch (err) {
       console.error(`❌ Erro ao inserir artigo: ${titulo}`, err.message);
     }
   }
 
-  console.log(`🆕 ${artigos.length} artigos processados e inseridos com estado/região detectados.`);
+  console.log(`🆕 ${artigos.length} artigos processados e inseridos.`);
+
   await db.close();
 }
 
 atualizarBanco().then(() => console.log("🏁 Coleta via NewsAPI concluída."));
+
 
