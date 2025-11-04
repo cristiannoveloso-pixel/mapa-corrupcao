@@ -318,8 +318,13 @@ async function initMapAndData() {
   }
 
   // Atualizar contador
-  const contadorEl = document.querySelector('#total-casos strong') || document.getElementById('total-casos');
-  if (contadorEl) contadorEl.innerHTML = `🧾 Total de casos: <strong>${casosData.length}</strong>`;
+const contadorEl = document.getElementById('total-casos');
+if (contadorEl) {
+  const strongEl = contadorEl.querySelector('strong');
+  if (strongEl) strongEl.textContent = casosData.length;
+  else contadorEl.innerHTML = `🧾 Total de casos: <strong>${casosData.length}</strong>`;
+}
+
 
   // Converter siglas para nomes completos
   const SIGLAS = {
