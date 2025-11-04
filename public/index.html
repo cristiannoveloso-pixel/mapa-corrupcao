@@ -273,6 +273,29 @@
             layer.on('mouseout', () => layer.setStyle({ fillOpacity: 0.8 }));
           }
         }).addTo(map);
+        data.forEach(caso => {
+  if (!caso.municipality) return; // ignora sem cidade
+
+  // Exemplo de tentativa de coordenadas com API local (ajuste se tiver lat/lng no banco)
+  // Caso tenha latitude/longitude no banco, use diretamente: L.marker([caso.lat, caso.lng])
+  
+  // 🔹 Aqui vamos usar uma função auxiliar pra obter coordenadas aproximadas
+  fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${caso.municipality}, ${caso.state}, Brasil`)
+    .then(res => res.json())
+    .then(loc => {
+      if (loc.length > 0) {
+        const { lat, lon } = loc[0];
+        const marker = L.marker([lat, lon]).addTo(map);
+        marker.bindPopup(`
+          <strong>${caso.title}</strong><br>
+          <em>${caso.municipality} - ${caso.state}</em><br>
+          ${caso.summary || ''}
+        `);
+      }
+    })
+    .catch(err => console.error("Erro ao geocodificar:", err));
+});
+
 
         map.fitBounds(boundsBrasil);
 
