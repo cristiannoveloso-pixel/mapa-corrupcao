@@ -151,16 +151,15 @@
   <!-- MAIN -->
   <main class="container mx-auto px-4 py-6 flex flex-col lg:flex-row gap-6">
     <section class="flex-1 bg-slate-900 p-4 rounded-lg shadow-lg">
-  <!-- Linha superior com total, pesquisa e botão -->
-  <div class="flex flex-wrap items-center justify-between gap-3 mb-3 w-full">
+  <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mb-4">
     <!-- Total de casos -->
-    <div id="total-casos" class="total-casos flex items-center">
+    <div id="total-casos" class="total-casos flex items-center justify-center md:justify-start">
       🧾 Total de casos: <strong style="margin-left:6px;">0</strong>
     </div>
 
-    <!-- Pesquisa + Botão -->
-    <div class="flex items-center gap-2 flex-1 justify-end">
-      <div class="relative flex-1 max-w-md">
+    <!-- Área de busca e botão -->
+    <div class="flex items-center justify-center md:justify-end gap-2 w-full md:w-auto">
+      <div class="relative w-full md:w-72">
         <span class="absolute inset-y-0 left-3 flex items-center text-gray-400">
           <i class="fa-solid fa-magnifying-glass"></i>
         </span>
@@ -168,26 +167,21 @@
           type="text"
           id="searchInput"
           placeholder="Pesquisar por estado, cidade ou ano..."
-          class="w-full bg-slate-800 border border-slate-600 text-gray-200 rounded-lg pl-9 pr-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-yellow-400"
-        />
+          class="w-full bg-slate-800 border border-slate-600 text-gray-200 rounded-lg pl-9 pr-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-yellow-400"/>
       </div>
-
       <button
         id="recenter"
-        class="recenter-btn bg-slate-800 border border-yellow-500 text-yellow-400 px-3 py-2 rounded-md hover:bg-slate-700 transition flex items-center gap-1"
-      >
+        class="recenter-btn bg-slate-800 border border-yellow-500 text-yellow-400 px-3 py-2 rounded-md hover:bg-slate-700 transition flex items-center gap-1 text-sm font-medium">
         🔄 Recentrar mapa
       </button>
     </div>
   </div>
-
   <!-- MAPA -->
   <div id="map" class="w-full h-[650px] rounded-lg shadow-lg"></div>
 
   <!-- CASOS -->
   <div id="cases-container" class="mt-4 text-sm text-gray-300"></div>
 </section>
-
      <!-- CASOS NACIONAIS -->
     <div id="national-cases" class="mb-4">
   <h3>Casos Nacionais</h3>
