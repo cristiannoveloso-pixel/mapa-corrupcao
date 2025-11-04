@@ -470,3 +470,17 @@ nav, .submenu {
   position: relative;
   z-index: 9999 !important;
 }
+.info.legend {
+  background: rgba(15, 23, 42, 0.9);
+  padding: 8px 12px;
+  border-radius: 8px;
+  color: #f1f5f9;
+  font-size: 13px;
+  line-height: 18px;
+  box-shadow: 0 0 6px rgba(0,0,0,0.4);
+}
+.info.legend h4 {
+  color: #facc15;
+  margin: 0 0 4px 0;
+  font-size: 14px;
+}

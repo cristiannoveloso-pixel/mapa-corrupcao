@@ -291,6 +291,30 @@ async function initMapAndData() {
   } catch (err) {
     console.error('❌ Erro GeoJSON:', err);
   }
+  // ---------- LEGENDA ----------
+const legend = L.control({ position: 'bottomright' });
+
+legend.onAdd = function () {
+  const div = L.DomUtil.create('div', 'info legend');
+  const grades = [0, 1, 3, 5];
+  const labels = [];
+
+  div.innerHTML += '<h4 style="margin-bottom:6px;">Casos de Corrupção</h4>';
+
+  for (let i = 0; i < grades.length; i++) {
+    const from = grades[i];
+    const to = grades[i + 1];
+
+    div.innerHTML +=
+      `<i style="background:${getColor(from + 1)}; width:18px; height:18px; display:inline-block; margin-right:5px; border-radius:3px;"></i>` +
+      (to ? `${from}–${to - 1}` : `${from}+`) + '<br>';
+  }
+
+  return div;
+};
+
+legend.addTo(map);
+
 
   mapEl.classList.add('loaded');
 }
