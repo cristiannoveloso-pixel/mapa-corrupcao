@@ -23,7 +23,7 @@ async function fetchFromPortal(pagina = 1) {
 
   try {
     const { data } = await axios.get(url, {
-      headers: { "chave-api": CHAVE }
+      headers: { "chave-api-dados": CHAVE }
     });
     return data;
   } catch (err) {
